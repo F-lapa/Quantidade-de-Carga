@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contagem de Cargas Inspecionadas</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background: #ffffff;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 400px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        form {
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"] {
+            padding: 10px;
+            margin-bottom: 20px;
+            width: 200px;
+            border: 2px solid #007bff;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus {
+            border-color: #0056b3;
+            outline: none;
+        }
+
+        .btn-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        button {
+            margin: 0 10px;
+            padding: 10px 20px;
+            background: linear-gradient(90deg, #007bff, #0056b3);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background: linear-gradient(90deg, #0056b3, #003d7a);
+        }
+
+        .result {
+            margin-top: 20px;
+            font-size: 20px;
+            color: #333;
+        }
+
+        .history {
+            margin-top: 20px;
+            text-align: left;
+            overflow-x: auto;
+        }
+
+        .history-list {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            white-space: nowrap;
+        }
+
+        .history-item {
+            display: inline-block;
+            margin-right: 10px;
+            background-color: #f0f0f0;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+
+        .btn-correct {
+            background-color: #dc3545;
+        }
+
+        .btn-correct:hover {
+            background-color: #c82333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Contagem de Cargas Inspecionadas</h1>
+        <form id="inspection-form">
+            <label for="quantity">Número de Cargas Inspecionadas:</label>
+            <input type="text" id="quantity" name="quantity" required>
+            <div class="btn-container">
+                <button type="submit">OK</button>
+                <button class="btn-correct" id="correct-button" type="button">Corrigir</button>
+                <button id="clear-button" type="button">Limpar</button>
+            </div>
+        </form>
+        <div class="result">
+            <strong>Total de Cargas Inspecionadas:</strong> <span id="total-inspected">0</span>
+        </div>
+        <div class="history">
+            <strong>Histórico:</strong>
+            <ul id="history-list" class="history-list"></ul>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('inspection-form');
+            const totalInspectedSpan = document.getElementById('total-inspected');
+            const historyList = document.getElementById('history-list');
+            const correctButton = document.getElementById('correct-button');
+            const clearButton = document.getElementById('clear-button');
+            let totalInspected = 0;
+            let history = [];
+
+            form.addEventListener('submit', function(event) {
+                event.preventDefault();
+
+                const quantityInput = document.getElementById('quantity');
+                let quantity = parseInt(quantityInput.value.replace('.', ''), 10);
+
+                if (!isNaN(quantity) && quantity >= 0) {
+                    totalInspected += quantity;
+                    totalInspectedSpan.textContent = totalInspected.toLocaleString('pt-BR');
+                    quantityInput.value = '';
+
+                    // Adiciona o número ao histórico
+                    history.push(quantity);
+                    updateHistory();
+                } else {
+                    alert("Por favor, insira um número válido de cargas inspecionadas.");
+                }
+            });
+
+            correctButton.addEventListener('click', function() {
+                if (history.length > 0 && confirm("Você tem certeza que deseja corrigir o último valor inserido?")) {
+                    const lastQuantity = history.pop();
+                    totalInspected -= lastQuantity;
+                    totalInspectedSpan.textContent = totalInspected.toLocaleString('pt-BR');
+                    updateHistory();
+                }
+            });
+
+            clearButton.addEventListener('click', function() {
+                if (confirm("Você tem certeza que deseja limpar o total e o histórico?")) {
+                    totalInspected = 0;
+                    history = [];
+                    totalInspectedSpan.textContent = totalInspected.toLocaleString('pt-BR');
+                    updateHistory();
+                }
+            });
+
+            const quantityInput = document.getElementById('quantity');
+            quantityInput.addEventListener('input', function() {
+                let value = this.value.replace(/[^0-9]/g, '');
+                if (value.length > 3) {
+                    value = value.slice(0, value.length - 3) + '.' + value.slice(value.length - 3);
+                }
+                this.value = value;
+            });
+
+            function updateHistory() {
+                historyList.innerHTML = '';
+                history.forEach(function(quantity) {
+                    const listItem = document.createElement('li');
+                    listItem.textContent = quantity.toLocaleString('pt-BR');
+                    listItem.className = 'history-item';
+                    historyList.appendChild(listItem);
+                });
+            }
+        });
+    </script>
+</body>
+</html>
