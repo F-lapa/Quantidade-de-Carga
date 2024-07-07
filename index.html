@@ -9,7 +9,8 @@
         
         body {
             font-family: 'Roboto', sans-serif;
-            background-color: #e0e7ff;
+            background-color: #ffffff;
+            color: #000000;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -18,23 +19,24 @@
         }
 
         .container {
-            background: #ffffff;
-            padding: 40px;
-            border-radius: 10px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-            width: 400px;
+            background: #000000;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+            width: 360px;
             text-align: center;
+            color: #ffffff;
         }
 
         h1 {
-            color: #333;
-            font-size: 28px;
-            margin-bottom: 30px;
+            color: #ffffff;
+            font-size: 24px;
+            margin-bottom: 24px;
             font-weight: 700;
         }
 
         form {
-            margin-bottom: 20px;
+            margin-bottom: 16px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -43,19 +45,20 @@
         label {
             display: block;
             font-weight: bold;
-            margin-bottom: 10px;
-            font-size: 18px;
+            margin-bottom: 8px;
+            font-size: 16px;
+            color: #ffffff;
         }
 
         input[type="text"] {
-            padding: 12px;
-            margin-bottom: 20px;
+            padding: 10px;
+            margin-bottom: 16px;
             width: 100%;
-            max-width: 250px;
-            border: 2px solid #007bff;
-            border-radius: 5px;
+            max-width: 220px;
+            border: 1px solid #007bff;
+            border-radius: 4px;
             box-sizing: border-box;
-            font-size: 16px;
+            font-size: 14px;
             transition: border-color 0.3s;
         }
 
@@ -71,22 +74,46 @@
         }
 
         button {
-            margin: 0 10px;
-            padding: 12px 20px;
-            background: linear-gradient(90deg, #007bff, #0056b3);
+            margin: 0 8px;
+            padding: 10px 16px;
             color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 4px;
             cursor: pointer;
-            font-size: 16px;
-            transition: background-color 0.3s;
+            font-size: 14px;
+            transition: transform 0.3s ease, background-color 0.3s ease;
             overflow: hidden;
             position: relative;
             font-weight: 700;
         }
 
         button:hover {
-            background: linear-gradient(90deg, #0056b3, #003d7a);
+            transform: scale(1.05);
+        }
+
+        .btn-ok {
+            background-color: #007bff;
+        }
+
+        .btn-ok:hover {
+            background-color: #0056b3;
+        }
+
+        .btn-correct {
+            background-color: #ffc107;
+            color: black;
+        }
+
+        .btn-correct:hover {
+            background-color: #e0a800;
+        }
+
+        .btn-clear {
+            background-color: #dc3545;
+        }
+
+        .btn-clear:hover {
+            background-color: #c82333;
         }
 
         .ripple {
@@ -105,15 +132,27 @@
         }
 
         .result {
-            margin-top: 20px;
+            margin-top: 16px;
             font-size: 22px;
-            color: #333;
+            color: #ffffff;
             font-weight: 700;
+            padding: 8px;
+            border: 1px solid #333;
+            border-radius: 4px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+            background-color: #2c2c2c;
+            transition: transform 0.3s ease, background-color 0.3s ease;
+        }
+
+        .result:hover {
+            background-color: #3c3c3c;
+            transform: scale(1.05);
         }
 
         .history {
-            margin-top: 20px;
+            margin-top: 16px;
             text-align: left;
+            color: #ffffff;
         }
 
         .history-list {
@@ -125,19 +164,12 @@
         }
 
         .history-item {
-            margin: 5px;
-            background-color: #e6e6e6;
-            padding: 8px 12px;
-            border-radius: 5px;
-            font-size: 16px;
-        }
-
-        .btn-correct {
-            background-color: #dc3545;
-        }
-
-        .btn-correct:hover {
-            background-color: #c82333;
+            margin: 4px;
+            background-color: #333;
+            padding: 6px 10px;
+            border-radius: 4px;
+            font-size: 14px;
+            color: #ffffff;
         }
 
         /* Estilos para a caixa de diálogo personalizada */
@@ -155,15 +187,16 @@
         }
 
         .dialog-container {
-            background: #fff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            background: #ffffff;
+            color: #000000;
+            padding: 16px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
             text-align: center;
         }
 
         .dialog-container p {
-            margin-bottom: 20px;
+            margin-bottom: 16px;
         }
 
         .dialog-buttons {
@@ -173,7 +206,36 @@
         }
 
         .dialog-buttons button {
-            margin: 0 10px;
+            margin: 0 8px;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: transform 0.3s ease, background-color 0.3s ease;
+            overflow: hidden;
+            position: relative;
+            font-weight: 700;
+        }
+
+        .dialog-buttons button:hover {
+            transform: scale(1.05);
+        }
+
+        .dialog-confirm {
+            background-color: #007bff;
+        }
+
+        .dialog-confirm:hover {
+            background-color: #0056b3;
+        }
+
+        .dialog-cancel {
+            background-color: #dc3545;
+        }
+
+        .dialog-cancel:hover {
+            background-color: #c82333;
         }
     </style>
 </head>
@@ -182,11 +244,11 @@
         <h1>Contagem de Cargas Inspecionadas</h1>
         <form id="inspection-form">
             <label for="quantity">Número de Cargas Inspecionadas:</label>
-            <input type="text" id="quantity" name="quantity" required autocomplete="off" pattern="\d*">
+            <input type="text" id="quantity" name="quantity" required autocomplete="off">
             <div class="btn-container">
-                <button type="submit">OK</button>
+                <button class="btn-ok" type="submit">OK</button>
                 <button class="btn-correct" id="correct-button" type="button">Corrigir</button>
-                <button id="clear-button" type="button">Limpar</button>
+                <button class="btn-clear" id="clear-button" type="button">Limpar</button>
             </div>
         </form>
         <div class="result">
@@ -203,8 +265,8 @@
         <div class="dialog-container">
             <p id="dialog-message"></p>
             <div class="dialog-buttons">
-                <button id="dialog-confirm">Confirmar</button>
-                <button id="dialog-cancel">Cancelar</button>
+                <button class="dialog-confirm" id="dialog-confirm">Confirmar</button>
+                <button class="dialog-cancel" id="dialog-cancel">Cancelar</button>
             </div>
         </div>
     </div>
@@ -224,6 +286,7 @@
             let totalInspected = 0;
             let history = [];
             let confirmAction = null;
+            const MAX_DIGITS = 20;
 
             // Carrega os dados do localStorage
             if (localStorage.getItem('totalInspected')) {
@@ -242,14 +305,19 @@
                 let quantity = parseInt(quantityInput.value.replace(/\./g, ''), 10);
 
                 if (!isNaN(quantity) && quantity >= 0) {
-                    totalInspected += quantity;
-                    totalInspectedSpan.textContent = formatNumber(totalInspected);
-                    quantityInput.value = '';
+                    const newTotal = totalInspected + quantity;
+                    if (newTotal.toString().length > MAX_DIGITS) {
+                        alert(`A soma total não pode exceder ${MAX_DIGITS} algarismos.`);
+                    } else {
+                        totalInspected = newTotal;
+                        totalInspectedSpan.textContent = formatNumber(totalInspected);
+                        quantityInput.value = '';
 
-                    // Adiciona o número ao histórico
-                    history.push(quantity);
-                    updateHistory();
-                    saveData();
+                        // Adiciona o número ao histórico
+                        history.push(quantity);
+                        updateHistory();
+                        saveData();
+                    }
                 } else {
                     alert("Por favor, insira um número válido de cargas inspecionadas.");
                 }
@@ -289,10 +357,11 @@
 
             function updateHistory() {
                 historyList.innerHTML = '';
-                history.forEach(function(quantity) {
+                history.forEach(function(quantity, index) {
                     const listItem = document.createElement('li');
                     listItem.textContent = formatNumber(quantity);
                     listItem.className = 'history-item';
+                    listItem.setAttribute('data-index', index);
                     historyList.appendChild(listItem);
                 });
             }
