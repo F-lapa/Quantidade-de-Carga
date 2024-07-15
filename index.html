@@ -192,6 +192,17 @@
             justify-content: center;
             align-items: center;
             z-index: 1000;
+            opacity: 0; /* Inicialmente invisível */
+            transition: opacity 0.5s ease; /* Transição de opacidade */
+        }
+
+        .dialog-overlay.show {
+            display: flex;
+            opacity: 1; /* Visível */
+        }
+
+        .dialog-overlay.hide {
+            opacity: 0; /* Invisível */
         }
 
         .dialog-container {
@@ -382,18 +393,26 @@
 
             function showDialog(message, onConfirm) {
                 dialogMessage.textContent = message;
-                dialogOverlay.style.display = 'flex';
+                dialogOverlay.classList.add('show');
+                dialogOverlay.classList.remove('hide');
                 confirmAction = onConfirm;
             }
 
             dialogConfirm.addEventListener('click', function() {
                 if (confirmAction) confirmAction();
-                dialogOverlay.style.display = 'none';
+                hideDialog();
             });
 
             dialogCancel.addEventListener('click', function() {
-                dialogOverlay.style.display = 'none';
+                hideDialog();
             });
+
+            function hideDialog() {
+                dialogOverlay.classList.add('hide');
+                setTimeout(function() {
+                    dialogOverlay.classList.remove('show');
+                }, 500); // Tempo da animação (mesmo valor do CSS)
+            }
 
             // Adiciona o efeito de ripple aos botões
             document.querySelectorAll('button').forEach(button => {
