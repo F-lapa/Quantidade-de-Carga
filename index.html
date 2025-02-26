@@ -1,438 +1,365 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contagem de Cargas Inspecionadas</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
-        
-        body {
-            font-family: 'Roboto', sans-serif;
-            background: linear-gradient(to right, #1e3c72, #2a5298);
-            color: #ffffff;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            height: 100vh;
-            margin: 0;
-            padding-top: 50px; /* Adicionado para ajustar a posição */
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contagem de Cargas Inspecionadas</title>
+  <style>
+    /* Estilos Gerais */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Poppins', 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #1e90ff, #00b4d8);
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      background: #fff;
+      border-radius: 20px;
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+      width: 100%;
+      max-width: 600px;
+      padding: 40px;
+      text-align: center;
+      position: relative;
+      margin-top: 20px;
+    }
+    h1 {
+      font-size: 30px;
+      margin-bottom: 30px;
+      color: #1e90ff;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+    form {
+      margin-bottom: 30px;
+    }
+    label {
+      font-size: 18px;
+      font-weight: 500;
+      margin-bottom: 12px;
+      display: block;
+      color: #2c3e50;
+    }
+    input[type="text"] {
+      width: 100%;
+      padding: 15px;
+      font-size: 18px;
+      border: 2px solid #1e90ff;
+      border-radius: 10px;
+      margin-bottom: 25px;
+      transition: all 0.3s ease;
+      text-align: center;
+      color: #2c3e50;
+      background: #f0f8ff;
+    }
+    input[type="text"]:focus {
+      border-color: #00b4d8;
+      box-shadow: 0 0 12px rgba(0, 180, 216, 0.4);
+      outline: none;
+    }
+    .btn-container {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+    }
+    button {
+      padding: 12px 30px;
+      font-size: 16px;
+      font-weight: 600;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+    button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    }
+    .btn-ok {
+      background: linear-gradient(135deg, #1e90ff, #00b4d8);
+      color: white;
+    }
+    .btn-correct {
+      background: linear-gradient(135deg, #ffca28, #ff9800);
+      color: #fff;
+    }
+    .btn-clear {
+      background: linear-gradient(135deg, #ff5252, #d32f2f);
+      color: white;
+    }
+    .result {
+      background: linear-gradient(135deg, #1e90ff, #00b4d8);
+      color: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 30px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+    .history {
+      text-align: left;
+      margin-top: 20px;
+    }
+    .history-list {
+      list-style: none;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .history-item {
+      background: #00b4d8;
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 25px;
+      font-size: 14px;
+      font-weight: 500;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+    }
 
-        .container {
-            background: rgba(0, 0, 0, 0.85);
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.6);
-            width: 360px;
-            text-align: center;
-            color: #ffffff;
-        }
-
-        h1 {
-            color: #ffffff;
-            font-size: 24px;
-            margin-bottom: 24px;
-            font-weight: 700;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-        }
-
-        form {
-            margin-bottom: 16px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        label {
-            display: block;
-            font-weight: bold;
-            margin-bottom: 8px;
-            font-size: 16px;
-            color: #ffffff;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-        }
-
-        input[type="text"] {
-            padding: 10px;
-            margin-bottom: 16px;
-            width: 100%;
-            max-width: 220px;
-            border: 1px solid #007bff;
-            border-radius: 4px;
-            box-sizing: border-box;
-            font-size: 14px;
-            transition: border-color 0.3s;
-            background: rgba(255, 255, 255, 0.1);
-            color: #ffffff;
-        }
-
-        input[type="text"]:focus {
-            border-color: #0056b3;
-            outline: none;
-            background: rgba(255, 255, 255, 0.2);
-        }
-
-        .btn-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        button {
-            margin: 0 8px;
-            padding: 10px 16px;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
-            overflow: hidden;
-            position: relative;
-            font-weight: 700;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-        }
-
-        button:hover {
-            transform: scale(1.05);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
-        }
-
-        .btn-ok {
-            background-color: #007bff;
-        }
-
-        .btn-ok:hover {
-            background-color: #0056b3;
-        }
-
-        .btn-correct {
-            background-color: #ffc107;
-            color: black;
-        }
-
-        .btn-correct:hover {
-            background-color: #e0a800;
-        }
-
-        .btn-clear {
-            background-color: #dc3545;
-        }
-
-        .btn-clear:hover {
-            background-color: #c82333;
-        }
-
-        .ripple {
-            position: absolute;
-            border-radius: 50%;
-            transform: scale(0);
-            animation: ripple 0.6s linear;
-            background-color: rgba(255, 255, 255, 0.7);
-        }
-
-        @keyframes ripple {
-            to {
-                transform: scale(4);
-                opacity: 0;
-            }
-        }
-
-        .result {
-            margin-top: 16px;
-            font-size: 22px;
-            color: #ffffff;
-            font-weight: 700;
-            padding: 8px;
-            border: 1px solid #333;
-            border-radius: 4px;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
-            background-color: #2c2c2c;
-            transition: transform 0.3s ease, background-color 0.3s ease;
-        }
-
-        .result:hover {
-            background-color: #3c3c3c;
-            transform: scale(1.05);
-        }
-
-        .history {
-            margin-top: 16px;
-            text-align: left;
-            color: #ffffff;
-        }
-
-        .history-list {
-            display: flex;
-            flex-wrap: wrap;
-            list-style-type: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        .history-item {
-            margin: 4px;
-            background-color: #333;
-            padding: 6px 10px;
-            border-radius: 4px;
-            font-size: 14px;
-            color: #ffffff;
-        }
-
-        /* Estilos para a caixa de diálogo personalizada */
-        .dialog-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            opacity: 0; /* Inicialmente invisível */
-            transition: opacity 0.5s ease; /* Transição de opacidade */
-        }
-
-        .dialog-overlay.show {
-            display: flex;
-            opacity: 1; /* Visível */
-        }
-
-        .dialog-overlay.hide {
-            opacity: 0; /* Invisível */
-        }
-
-        .dialog-container {
-            background: #000000;
-            color: #ffffff;
-            padding: 16px;
-            border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-            text-align: center;
-        }
-
-        .dialog-container p {
-            margin-bottom: 16px;
-        }
-
-        .dialog-buttons {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .dialog-buttons button {
-            margin: 0 8px;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
-            overflow: hidden;
-            position: relative;
-            font-weight: 700;
-        }
-
-        .dialog-buttons button:hover {
-            transform: scale(1.05);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
-        }
-
-        .dialog-confirm {
-            background-color: #007bff;
-        }
-
-        .dialog-confirm:hover {
-            background-color: #0056b3;
-        }
-
-        .dialog-cancel {
-            background-color: #dc3545;
-        }
-
-        .dialog-cancel:hover {
-            background-color: #c82333;
-        }
-    </style>
+    /* Caixa de Diálogo */
+    .dialog-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.65);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .dialog-overlay.show {
+      display: flex;
+      opacity: 1;
+    }
+    .dialog-container {
+      background: #fff;
+      color: #2c3e50;
+      padding: 35px;
+      border-radius: 15px;
+      text-align: center;
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+      width: 90%;
+      max-width: 450px;
+      transform: scale(0.9);
+      opacity: 0;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+    .dialog-overlay.show .dialog-container {
+      transform: scale(1);
+      opacity: 1;
+    }
+    .dialog-buttons {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      margin-top: 30px;
+    }
+    .dialog-confirm {
+      background: linear-gradient(135deg, #1e90ff, #00b4d8);
+      color: white;
+      padding: 12px 25px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+    .dialog-confirm:hover {
+      transform: scale(1.05);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    }
+    .dialog-cancel {
+      background: linear-gradient(135deg, #ff5252, #d32f2f);
+      color: white;
+      padding: 12px 25px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+    .dialog-cancel:hover {
+      transform: scale(1.05);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Contagem de Cargas Inspecionadas</h1>
-        <form id="inspection-form">
-            <label for="quantity">Número de Cargas Inspecionadas:</label>
-            <input type="text" id="quantity" name="quantity" required autocomplete="off">
-            <div class="btn-container">
-                <button class="btn-ok" type="submit">OK</button>
-                <button class="btn-correct" id="correct-button" type="button">Corrigir</button>
-                <button class="btn-clear" id="clear-button" type="button">Limpar</button>
-            </div>
-        </form>
-        <div class="result">
-            <strong>Total de Cargas Inspecionadas:</strong> <span id="total-inspected">0</span>
-        </div>
-        <div class="history">
-            <strong>Histórico:</strong>
-            <ul id="history-list" class="history-list"></ul>
-        </div>
+  <div class="container">
+    <h1>Contagem de Cargas Inspecionadas</h1>
+    <form id="inspection-form">
+      <label for="quantity">Número de Cargas Inspecionadas:</label>
+      <input type="text" id="quantity" name="quantity" required autocomplete="off" inputmode="numeric">
+      <div class="btn-container">
+        <button class="btn-ok" type="submit">OK</button>
+        <button class="btn-correct" id="correct-button" type="button">Corrigir</button>
+        <button class="btn-clear" id="clear-button" type="button">Limpar</button>
+      </div>
+    </form>
+    <div class="result">
+      <strong>Total de Cargas Inspecionadas:</strong> <span id="total-inspected">0</span>
     </div>
-
-    <!-- Caixa de diálogo personalizada -->
-    <div class="dialog-overlay" id="dialog-overlay">
-        <div class="dialog-container">
-            <p id="dialog-message"></p>
-            <div class="dialog-buttons">
-                <button class="dialog-confirm" id="dialog-confirm">Confirmar</button>
-                <button class="dialog-cancel" id="dialog-cancel">Cancelar</button>
-            </div>
-        </div>
+    <div class="history">
+      <strong>Histórico:</strong>
+      <ul id="history-list" class="history-list"></ul>
     </div>
+  </div>
+  <!-- Caixa de Diálogo -->
+  <div class="dialog-overlay" id="dialog-overlay">
+    <div class="dialog-container">
+      <p id="dialog-message"></p>
+      <div class="dialog-buttons">
+        <button class="dialog-confirm" id="dialog-confirm">Confirmar</button>
+        <button class="dialog-cancel" id="dialog-cancel">Cancelar</button>
+      </div>
+    </div>
+  </div>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const form = document.getElementById('inspection-form');
+      const totalInspectedSpan = document.getElementById('total-inspected');
+      const historyList = document.getElementById('history-list');
+      const correctButton = document.getElementById('correct-button');
+      const clearButton = document.getElementById('clear-button');
+      const dialogOverlay = document.getElementById('dialog-overlay');
+      const dialogMessage = document.getElementById('dialog-message');
+      const dialogConfirm = document.getElementById('dialog-confirm');
+      const dialogCancel = document.getElementById('dialog-cancel');
+      const quantityInput = document.getElementById('quantity');
+      let totalInspected = 0;
+      let history = [];
+      let confirmAction = null;
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const form = document.getElementById('inspection-form');
-            const totalInspectedSpan = document.getElementById('total-inspected');
-            const historyList = document.getElementById('history-list');
-            const correctButton = document.getElementById('correct-button');
-            const clearButton = document.getElementById('clear-button');
-            const dialogOverlay = document.getElementById('dialog-overlay');
-            const dialogMessage = document.getElementById('dialog-message');
-            const dialogConfirm = document.getElementById('dialog-confirm');
-            const dialogCancel = document.getElementById('dialog-cancel');
+      // Carrega os dados do localStorage
+      if (localStorage.getItem('totalInspected')) {
+        totalInspected = parseInt(localStorage.getItem('totalInspected'), 10);
+        totalInspectedSpan.textContent = totalInspected.toLocaleString('pt-BR');
+      }
+      if (localStorage.getItem('history')) {
+        history = JSON.parse(localStorage.getItem('history'));
+        updateHistory();
+      }
 
-            let totalInspected = 0;
-            let history = [];
-            let confirmAction = null;
-            const MAX_DIGITS = 20;
+      // Função para formatar número com pontos
+      function formatNumber(value) {
+        const cleaned = value.replace(/\D/g, ''); // Remove tudo que não é número
+        return cleaned.replace(/\B(?=(\d{3})+(?!\d))/g, '.'); // Adiciona pontos a cada 3 dígitos
+      }
 
-            // Carrega os dados do localStorage
-            if (localStorage.getItem('totalInspected')) {
-                totalInspected = parseInt(localStorage.getItem('totalInspected'), 10);
-                totalInspectedSpan.textContent = formatNumber(totalInspected);
-            }
-            if (localStorage.getItem('history')) {
-                history = JSON.parse(localStorage.getItem('history'));
-                updateHistory();
-            }
+      // Evento para formatar o input em tempo real
+      quantityInput.addEventListener('input', function () {
+        this.value = formatNumber(this.value);
+      });
 
-            form.addEventListener('submit', function(event) {
-                event.preventDefault();
+      // Função para salvar os dados no localStorage
+      function saveData() {
+        localStorage.setItem('totalInspected', totalInspected);
+        localStorage.setItem('history', JSON.stringify(history));
+      }
 
-                const quantityInput = document.getElementById('quantity');
-                let quantity = parseInt(quantityInput.value.replace(/\./g, ''), 10);
-
-                if (!isNaN(quantity) && quantity >= 0) {
-                    const newTotal = totalInspected + quantity;
-                    if (newTotal.toString().length > MAX_DIGITS) {
-                        alert(`A soma total não pode exceder ${MAX_DIGITS} algarismos.`);
-                    } else {
-                        totalInspected = newTotal;
-                        totalInspectedSpan.textContent = formatNumber(totalInspected);
-                        quantityInput.value = '';
-
-                        // Adiciona o número ao histórico
-                        history.push(quantity);
-                        updateHistory();
-                        saveData();
-                    }
-                } else {
-                    alert("Por favor, insira um número válido de cargas inspecionadas.");
-                }
-            });
-
-            correctButton.addEventListener('click', function() {
-                if (history.length > 0) {
-                    showDialog("Você tem certeza que deseja corrigir o último valor inserido?", function() {
-                        const lastQuantity = history.pop();
-                        totalInspected -= lastQuantity;
-                        totalInspectedSpan.textContent = formatNumber(totalInspected);
-                        updateHistory();
-                        saveData();
-                    });
-                }
-            });
-
-            clearButton.addEventListener('click', function() {
-                showDialog("Você tem certeza que deseja limpar o total e o histórico?", function() {
-                    totalInspected = 0;
-                    history = [];
-                    totalInspectedSpan.textContent = formatNumber(totalInspected);
-                    updateHistory();
-                    saveData();
-                });
-            });
-
-            const quantityInput = document.getElementById('quantity');
-            quantityInput.addEventListener('input', function() {
-                let value = this.value.replace(/[^0-9]/g, '');
-                this.value = formatNumber(value);
-            });
-
-            function formatNumber(number) {
-                return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-            }
-
-            function updateHistory() {
-                historyList.innerHTML = '';
-                history.forEach(function(quantity, index) {
-                    const listItem = document.createElement('li');
-                    listItem.textContent = formatNumber(quantity);
-                    listItem.className = 'history-item';
-                    listItem.setAttribute('data-index', index);
-                    historyList.appendChild(listItem);
-                });
-            }
-
-            function saveData() {
-                localStorage.setItem('totalInspected', totalInspected);
-                localStorage.setItem('history', JSON.stringify(history));
-            }
-
-            function showDialog(message, onConfirm) {
-                dialogMessage.textContent = message;
-                dialogOverlay.classList.add('show');
-                dialogOverlay.classList.remove('hide');
-                confirmAction = onConfirm;
-            }
-
-            dialogConfirm.addEventListener('click', function() {
-                if (confirmAction) confirmAction();
-                hideDialog();
-            });
-
-            dialogCancel.addEventListener('click', function() {
-                hideDialog();
-            });
-
-            function hideDialog() {
-                dialogOverlay.classList.add('hide');
-                setTimeout(function() {
-                    dialogOverlay.classList.remove('show');
-                }, 500); // Tempo da animação (mesmo valor do CSS)
-            }
-
-            // Adiciona o efeito de ripple aos botões
-            document.querySelectorAll('button').forEach(button => {
-                button.addEventListener('click', function (e) {
-                    const rect = button.getBoundingClientRect();
-                    const ripple = document.createElement('span');
-                    const size = Math.max(rect.width, rect.height);
-                    const x = e.clientX - rect.left - size / 2;
-                    const y = e.clientY - rect.top - size / 2;
-                    ripple.style.width = ripple.style.height = `${size}px`;
-                    ripple.style.left = `${x}px`;
-                    ripple.style.top = `${y}px`;
-                    ripple.classList.add('ripple');
-                    button.appendChild(ripple);
-                    setTimeout(() => {
-                        ripple.remove();
-                    }, 600);
-                });
-            });
+      // Função para formatar o histórico
+      function updateHistory() {
+        historyList.innerHTML = '';
+        history.forEach(quantity => {
+          const item = document.createElement('li');
+          item.className = 'history-item';
+          item.textContent = quantity.toLocaleString('pt-BR');
+          historyList.appendChild(item);
         });
-    </script>
+      }
+
+      // Adiciona um novo valor ao total
+      form.addEventListener('submit', function (event) {
+        event.preventDefault();
+        const rawValue = quantityInput.value || '0'; // Garante que não seja undefined
+        const quantity = parseInt(rawValue.replace(/\./g, ''), 10); // Remove pontos antes de parsear
+
+        if (!isNaN(quantity) && quantity >= 0) {
+          totalInspected += quantity;
+          totalInspectedSpan.textContent = totalInspected.toLocaleString('pt-BR');
+          history.push(quantity);
+          updateHistory();
+          saveData();
+          quantityInput.value = '';
+        } else {
+          alert("Por favor, insira um número válido.");
+        }
+      });
+
+      // Exibe a caixa de diálogo
+      function showDialog(message, onConfirm) {
+        dialogMessage.textContent = message;
+        dialogOverlay.style.display = 'flex';
+        setTimeout(() => {
+          dialogOverlay.classList.add('show');
+        }, 10);
+        confirmAction = onConfirm;
+      }
+
+      // Esconde a caixa de diálogo
+      function hideDialog() {
+        dialogOverlay.classList.remove('show');
+        setTimeout(() => {
+          dialogOverlay.style.display = 'none';
+        }, 300);
+      }
+
+      // Botão Confirmar na caixa de diálogo
+      dialogConfirm.addEventListener('click', function () {
+        if (confirmAction) confirmAction();
+        hideDialog();
+      });
+
+      // Botão Cancelar na caixa de diálogo
+      dialogCancel.addEventListener('click', function () {
+        hideDialog();
+      });
+
+      // Corrige o último valor inserido
+      correctButton.addEventListener('click', function () {
+        if (history.length > 0) {
+          showDialog("Você tem certeza que deseja corrigir o último valor inserido?", function () {
+            const lastQuantity = history.pop();
+            totalInspected -= lastQuantity;
+            totalInspectedSpan.textContent = totalInspected.toLocaleString('pt-BR');
+            updateHistory();
+            saveData();
+          });
+        } else {
+          alert("Não há valores no histórico para corrigir.");
+        }
+      });
+
+      // Limpa o total e o histórico
+      clearButton.addEventListener('click', function () {
+        showDialog("Você tem certeza que deseja limpar o total e o histórico?", function () {
+          totalInspected = 0;
+          history = [];
+          totalInspectedSpan.textContent = totalInspected.toLocaleString('pt-BR');
+          updateHistory();
+          saveData();
+        });
+      });
+    });
+  </script>
 </body>
 </html>
