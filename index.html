@@ -32,6 +32,7 @@
       text-align: center;
       position: relative;
       margin-top: 20px;
+      animation: slideInRotate 0.8s ease-out forwards;
     }
     h1 {
       font-size: 30px;
@@ -109,6 +110,12 @@
       margin-bottom: 30px;
       box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
     }
+    #total-inspected {
+      display: inline-block;
+    }
+    #total-inspected.updating {
+      animation: totalPulseGlow 1s ease-out forwards;
+    }
     .history {
       text-align: left;
       margin-top: 20px;
@@ -127,6 +134,12 @@
       font-size: 14px;
       font-weight: 500;
       box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+    }
+    .history-item.latest {
+      animation: pulseGlow 1s ease-out forwards;
+    }
+    .history-item.removing {
+      animation: pulseFadeOut 1s ease-out forwards;
     }
 
     /* Caixa de Diálogo */
@@ -201,6 +214,78 @@
       transform: scale(1.05);
       box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
     }
+
+    /* Animações */
+    @keyframes slideInRotate {
+      0% {
+        opacity: 0;
+        transform: translateX(-100%) rotate(-10deg);
+      }
+      100% {
+        opacity: 1;
+        transform: translateX(0) rotate(0deg);
+      }
+    }
+
+    @keyframes pulseGlow {
+      0% {
+        transform: scale(1);
+        background: #00b4d8;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+      }
+      50% {
+        transform: scale(1.3);
+        background: #ffeb3b;
+        box-shadow: 0 0 20px rgba(255, 235, 59, 0.8);
+        color: #2c3e50;
+      }
+      100% {
+        transform: scale(1);
+        background: #00b4d8;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        color: #fff;
+      }
+    }
+
+    @keyframes pulseFadeOut {
+      0% {
+        transform: scale(1);
+        background: #00b4d8;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        opacity: 1;
+      }
+      50% {
+        transform: scale(1.3);
+        background: #ffeb3b;
+        box-shadow: 0 0 20px rgba(255, 235, 59, 0.8);
+        color: #2c3e50;
+        opacity: 1;
+      }
+      100% {
+        transform: scale(0.8);
+        background: #ffeb3b;
+        box-shadow: 0 0 10px rgba(255, 235, 59, 0.5);
+        opacity: 0;
+      }
+    }
+
+    @keyframes totalPulseGlow {
+      0% {
+        transform: scale(1);
+        color: #fff;
+        text-shadow: none;
+      }
+      50% {
+        transform: scale(1.2);
+        color: #ffeb3b;
+        text-shadow: 0 0 15px rgba(255, 235, 59, 0.8);
+      }
+      100% {
+        transform: scale(1);
+        color: #fff;
+        text-shadow: none;
+      }
+    }
   </style>
 </head>
 <body>
@@ -259,43 +344,48 @@
         updateHistory();
       }
 
-      // Função para formatar número com pontos
       function formatNumber(value) {
-        const cleaned = value.replace(/\D/g, ''); // Remove tudo que não é número
-        return cleaned.replace(/\B(?=(\d{3})+(?!\d))/g, '.'); // Adiciona pontos a cada 3 dígitos
+        const cleaned = value.replace(/\D/g, '');
+        return cleaned.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
       }
 
-      // Evento para formatar o input em tempo real
       quantityInput.addEventListener('input', function () {
         this.value = formatNumber(this.value);
       });
 
-      // Função para salvar os dados no localStorage
       function saveData() {
         localStorage.setItem('totalInspected', totalInspected);
         localStorage.setItem('history', JSON.stringify(history));
       }
 
-      // Função para formatar o histórico
       function updateHistory() {
         historyList.innerHTML = '';
-        history.forEach(quantity => {
+        history.forEach((quantity, index) => {
           const item = document.createElement('li');
           item.className = 'history-item';
+          if (index === history.length - 1 && history.length > 0) {
+            item.classList.add('latest');
+          }
           item.textContent = quantity.toLocaleString('pt-BR');
           historyList.appendChild(item);
         });
       }
 
-      // Adiciona um novo valor ao total
+      function animateTotal() {
+        totalInspectedSpan.classList.remove('updating');
+        void totalInspectedSpan.offsetWidth; // Força reflow para reiniciar a animação
+        totalInspectedSpan.classList.add('updating');
+      }
+
       form.addEventListener('submit', function (event) {
         event.preventDefault();
-        const rawValue = quantityInput.value || '0'; // Garante que não seja undefined
-        const quantity = parseInt(rawValue.replace(/\./g, ''), 10); // Remove pontos antes de parsear
+        const rawValue = quantityInput.value || '0';
+        const quantity = parseInt(rawValue.replace(/\./g, ''), 10);
 
         if (!isNaN(quantity) && quantity >= 0) {
           totalInspected += quantity;
           totalInspectedSpan.textContent = totalInspected.toLocaleString('pt-BR');
+          animateTotal();
           history.push(quantity);
           updateHistory();
           saveData();
@@ -305,7 +395,6 @@
         }
       });
 
-      // Exibe a caixa de diálogo
       function showDialog(message, onConfirm) {
         dialogMessage.textContent = message;
         dialogOverlay.style.display = 'flex';
@@ -315,7 +404,6 @@
         confirmAction = onConfirm;
       }
 
-      // Esconde a caixa de diálogo
       function hideDialog() {
         dialogOverlay.classList.remove('show');
         setTimeout(() => {
@@ -323,38 +411,46 @@
         }, 300);
       }
 
-      // Botão Confirmar na caixa de diálogo
       dialogConfirm.addEventListener('click', function () {
         if (confirmAction) confirmAction();
         hideDialog();
       });
 
-      // Botão Cancelar na caixa de diálogo
       dialogCancel.addEventListener('click', function () {
         hideDialog();
       });
 
-      // Corrige o último valor inserido
       correctButton.addEventListener('click', function () {
         if (history.length > 0) {
           showDialog("Você tem certeza que deseja corrigir o último valor inserido?", function () {
             const lastQuantity = history.pop();
             totalInspected -= lastQuantity;
             totalInspectedSpan.textContent = totalInspected.toLocaleString('pt-BR');
-            updateHistory();
-            saveData();
+            animateTotal();
+            const lastItem = historyList.lastElementChild;
+            if (lastItem) {
+              lastItem.classList.remove('latest');
+              lastItem.classList.add('removing');
+              setTimeout(() => {
+                updateHistory();
+                saveData();
+              }, 1000);
+            } else {
+              updateHistory();
+              saveData();
+            }
           });
         } else {
           alert("Não há valores no histórico para corrigir.");
         }
       });
 
-      // Limpa o total e o histórico
       clearButton.addEventListener('click', function () {
         showDialog("Você tem certeza que deseja limpar o total e o histórico?", function () {
           totalInspected = 0;
           history = [];
           totalInspectedSpan.textContent = totalInspected.toLocaleString('pt-BR');
+          animateTotal();
           updateHistory();
           saveData();
         });
