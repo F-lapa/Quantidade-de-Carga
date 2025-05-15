@@ -578,15 +578,19 @@
 
       function updateHistory() {
         historyList.innerHTML = '';
-        history.forEach((quantity, index) => {
+        // Inverter a ordem de exibição para que o último item apareça à esquerda
+        history.slice().reverse().forEach((quantity, index, reversedArray) => {
           const item = document.createElement('li');
           item.className = 'history-item';
-          if (index === history.length - 1 && history.length > 0) {
+          // O primeiro item da lista invertida (último do histórico) é o mais recente
+          if (index === 0 && history.length > 0) {
             item.classList.add('latest');
           }
           item.textContent = quantity.toLocaleString('pt-BR');
           historyList.appendChild(item);
         });
+        // Rolar para a esquerda para mostrar o item mais recente
+        historyList.scrollLeft = 0;
       }
 
       function animateTotal() {
@@ -639,10 +643,10 @@
             totalInspected -= lastQuantity;
             totalInspectedSpan.textContent = totalInspected.toLocaleString('pt-BR');
             animateTotal();
-            const lastItem = historyList.lastElementChild;
-            if (lastItem) {
-              lastItem.classList.remove('latest');
-              lastItem.classList.add('removing');
+            const firstItem = historyList.firstElementChild;
+            if (firstItem) {
+              firstItem.classList.remove('latest');
+              firstItem.classList.add('removing');
               setTimeout(() => {
                 updateHistory();
                 saveData();
