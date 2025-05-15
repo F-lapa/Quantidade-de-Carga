@@ -184,6 +184,14 @@
       margin-top: 1.5rem;
     }
 
+    .history strong {
+      color: transparent;
+      background: linear-gradient(135deg, #0ea5e9, #1e40af);
+      background-clip: text;
+      -webkit-background-clip: text;
+      font-weight: 600;
+    }
+
     .history-list {
       list-style: none;
       display: flex;
@@ -191,27 +199,18 @@
       gap: 0.75rem;
       max-height: 150px;
       overflow-y: auto;
-      scrollbar-width: thin;
-      scrollbar-color: #0ea5e9 #f0f9ff;
+      scrollbar-width: none; /* Oculta a scrollbar no Firefox */
     }
 
     .history-list::-webkit-scrollbar {
-      width: 6px;
-    }
-
-    .history-list::-webkit-scrollbar-track {
-      background: #f0f9ff;
-      border-radius: 12px;
-    }
-
-    .history-list::-webkit-scrollbar-thumb {
-      background: #0ea5e9;
-      border-radius: 12px;
+      display: none; /* Oculta a scrollbar em navegadores WebKit */
     }
 
     .history-item {
       background: linear-gradient(135deg, #0ea5e9, #1e40af);
-      color: #fff;
+      color: transparent; /* Torna o texto transparente para o gradiente */
+      background-clip: text;
+      -webkit-background-clip: text;
       padding: 0.6rem 1.2rem;
       border-radius: 20px;
       font-size: 0.9rem;
@@ -226,6 +225,16 @@
 
     .history-item.removing {
       animation: pulseFadeOut 1s ease-out forwards;
+    }
+
+    /* Estilo para o texto do footer */
+    .footer {
+      margin-top: 2rem;
+      font-size: 1rem; /* Fonte um pouco maior */
+      color: transparent; /* Torna o texto transparente para o gradiente */
+      background: linear-gradient(135deg, #0ea5e9, #1e40af);
+      background-clip: text;
+      -webkit-background-clip: text;
     }
 
     /* Caixa de Diálogo */
@@ -366,6 +375,10 @@
         font-size: 0.8rem;
         padding: 0.5rem 1rem;
       }
+
+      .footer {
+        font-size: 0.9rem; /* Ajuste para telas menores */
+      }
     }
   </style>
 </head>
@@ -374,7 +387,7 @@
   <div class="container">
     <h1><i class="fas fa-boxes"></i> Contagem de Cargas</h1>
     <form id="inspection-form">
-      <label for="quantity">Número de Cargas Inspecionadas:</label>
+    <label for="quantity">Número de Cargas Inspecionadas:</label>
       <input type="text" id="quantity" name="quantity" required autocomplete="off" inputmode="numeric" placeholder="Digite aqui">
       <div class="btn-container">
         <button class="btn-ok" type="submit"><i class="fas fa-check"></i> OK</button>
@@ -388,6 +401,9 @@
     <div class="history">
       <strong>Histórico:</strong>
       <ul id="history-list" class="history-list"></ul>
+    </div>
+    <div class="footer">
+      Desenvolvido por Fernando Lapa
     </div>
   </div>
   <div class="dialog-overlay" id="dialog-overlay">
