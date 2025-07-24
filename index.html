@@ -4,18 +4,41 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Contagem de Cargas Inspecionadas</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
+    /* Estilo "Space Glass" com o fundo azul marinho mais evidente */
+
+    :root {
+      --primary-color: #38bdf8; /* Azul Céu (Sky Blue) */
+      --warning-color: #facc15; /* Amarelo */
+      --danger-color: #f87171;  /* Vermelho */
+      
+      /* NOVOS TONS DE AZUL MARINHO - MAIS VIBRANTES */
+      --navy-vibrant-start: #1A2E4A;
+      --navy-vibrant-end: #0B1D33;
+      
+      --light-text: #e0f2fe;
+    }
+
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
+    
+    ::selection {
+      background: var(--primary-color);
+      color: #1A2E4A;
+    }
 
     body {
       font-family: 'Poppins', sans-serif;
-      background: linear-gradient(135deg, #0284c7 0%, #1e3a8a 100%);
-      color: #fff;
+      /* FUNDO ATUALIZADO PARA SER MAIS AZUL */
+      background: linear-gradient(135deg, var(--navy-vibrant-start) 0%, var(--navy-vibrant-end) 100%);
+      color: var(--light-text);
       display: flex;
       justify-content: center;
       align-items: center;
@@ -32,38 +55,37 @@
       width: 100%;
       height: 100%;
       z-index: 0;
-      opacity: 0.3;
     }
 
     .container {
-      background: rgba(255, 255, 255, 0.2);
+      background: rgba(11, 29, 51, 0.5); /* Ajustado para o novo fundo */
       border-radius: 30px;
-      box-shadow: 0 25px 70px rgba(0, 0, 0, 0.4);
+      box-shadow: 0 25px 70px rgba(0, 0, 0, 0.5);
       width: 100%;
       max-width: 700px;
       padding: 3rem;
       text-align: center;
       position: relative;
       z-index: 1;
-      backdrop-filter: blur(15px);
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      animation: floatIn 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(56, 189, 248, 0.2);
+      animation: floatIn 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
     }
 
     h1 {
-      font-size: 3rem;
+      font-size: 2.8rem;
       margin-bottom: 2.5rem;
       font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 3px;
       color: #ffffff;
-      text-shadow: 0 3px 10px rgba(0, 0, 0, 0.5);
-      animation: fadeInDown 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+      text-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
+      animation: fadeInDown 1s cubic-bezier(0.4, 0, 0.2, 1) forwards .2s;
     }
 
     h1 .fa-boxes {
-      color: #facc15;
-      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+      color: var(--primary-color);
+      text-shadow: 0 0 20px var(--primary-color);
     }
 
     form {
@@ -71,114 +93,105 @@
     }
 
     label {
-      font-size: 1.3rem;
+      font-size: 1.2rem;
       font-weight: 600;
-      margin-bottom: 1.2rem;
+      margin-bottom: 1rem;
       display: block;
-      color: #ffffff;
+      color: var(--light-text);
       text-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
     }
-
+    
     input[type="text"] {
       width: 100%;
-      padding: 1.2rem;
-      font-size: 1.3rem;
+      padding: 1rem;
+      font-size: 1.5rem;
+      font-weight: 600;
       border: none;
-      border-radius: 15px;
-      margin-bottom: 1.8rem;
+      border-radius: 0;
+      margin-bottom: 2rem;
       text-align: center;
-      color: #1e3a8a;
-      background: linear-gradient(135deg, #f0f9ff, #bfdbfe);
-      box-shadow: inset 0 3px 10px rgba(0, 0, 0, 0.1);
+      color: var(--light-text);
+      background: transparent;
+      border-bottom: 2px solid rgba(56, 189, 248, 0.3);
       transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     input[type="text"]:focus {
-      box-shadow: 0 0 20px rgba(14, 165, 233, 0.7);
-      transform: scale(1.03);
-      background: #ffffff;
       outline: none;
+      border-bottom-color: var(--primary-color);
+      box-shadow: 0 10px 20px -10px rgba(56, 189, 248, 0.5);
     }
 
     .btn-container {
       display: flex;
-      gap: 1.2rem;
+      gap: 1rem;
       justify-content: center;
       flex-wrap: wrap;
     }
-
+    
     button {
-      padding: 0.9rem 2.5rem;
-      font-size: 1.1rem;
+      padding: 0.8rem 2.2rem;
+      font-size: 1rem;
       font-weight: 700;
-      border: none;
-      border-radius: 15px;
+      border: 1px solid transparent;
+      border-radius: 12px;
       cursor: pointer;
-      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
-      position: relative;
-      overflow: hidden;
-      z-index: 1;
-      color: #ffffff;
-    }
-
-    button::before {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 0;
-      height: 0;
-      background: rgba(255, 255, 255, 0.4);
-      border-radius: 50%;
-      transform: translate(-50%, -50%);
-      transition: width 0.6s ease, height 0.6s ease;
-      z-index: -1;
-    }
-
-    button:hover::before {
-      width: 400%;
-      height: 400%;
+      transition: all 0.3s ease-out;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+      text-transform: uppercase;
+      letter-spacing: 1px;
     }
 
     button:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+      transform: translateY(-3px) scale(1.03);
     }
 
     .btn-ok {
-      background: linear-gradient(135deg, #0ea5e9, #1e3a8a);
+      background: var(--primary-color);
+      color: #0B1D33;
+      border-color: var(--primary-color);
     }
+    .btn-ok:hover { box-shadow: 0 0 25px rgba(56, 189, 248, 0.6); }
 
     .btn-correct {
-      background: linear-gradient(135deg, #facc15, #f59e0b);
+      background: var(--warning-color);
+      color: #1e1b09;
+      border-color: var(--warning-color);
     }
+    .btn-correct:hover { box-shadow: 0 0 25px rgba(250, 204, 21, 0.6); }
 
     .btn-clear {
-      background: linear-gradient(135deg, #ef4444, #b91c1c);
+      background: var(--danger-color);
+      color: #ffffff;
+      border-color: var(--danger-color);
     }
+    .btn-clear:hover { box-shadow: 0 0 25px rgba(248, 113, 113, 0.6); }
+    
+    button .fas { margin-right: 8px; }
 
     .result {
-      background: linear-gradient(135deg, #0284c7, #1e3a8a);
+      background: rgba(11, 29, 51, 0.7);
       color: #ffffff;
-      padding: 1.8rem;
+      padding: 1.5rem;
       border-radius: 20px;
-      font-size: 1.6rem;
+      font-size: 1.5rem;
       font-weight: 700;
       margin-bottom: 2.5rem;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
-      animation: fadeInUp 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+      animation: fadeInUp 1s cubic-bezier(0.4, 0, 0.2, 1) forwards .4s;
+      border: 1px solid rgba(56, 189, 248, 0.1);
     }
 
     #total-inspected {
       display: inline-block;
-      font-size: 2.5rem;
-      color: #facc15;
+      font-size: 2.8rem;
+      color: var(--primary-color);
       transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      margin-left: 10px;
     }
-
+    
     #total-inspected.updating {
-      animation: totalPulseGlow 1.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+      animation: totalPulseGlow 1.2s ease-out forwards;
     }
 
     .history {
@@ -187,237 +200,132 @@
     }
 
     .history strong {
-      font-size: 1.2rem;
-      color: #ffffff;
-      font-weight: 700;
+      font-size: 1.1rem;
+      color: var(--light-text);
+      font-weight: 600;
       text-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
       display: block;
-      margin-bottom: 0.5rem;
+      margin-bottom: 0.8rem;
     }
 
     .history-list {
       list-style: none;
       display: flex;
-      flex-direction: row;
       flex-wrap: nowrap;
-      gap: 0.4rem;
+      gap: 0.5rem;
       max-height: 40px;
       overflow-x: auto;
       overflow-y: hidden;
-      padding-bottom: 0.5rem;
-      white-space: nowrap;
-      align-items: center;
-      scrollbar-width: thin;
-      scrollbar-color: rgba(255, 255, 255, 0.5) transparent;
+      padding-bottom: 1rem;
     }
 
-    .history-list::-webkit-scrollbar {
-      height: 8px;
-    }
-
-    .history-list::-webkit-scrollbar-track {
-      background: transparent;
-    }
-
-    .history-list::-webkit-scrollbar-thumb {
-      background: rgba(255, 255, 255, 0.5);
-      border-radius: 10px;
-      border: 2px solid transparent;
-      background-clip: padding-box;
-    }
-
-    .history-list::-webkit-scrollbar-thumb:hover {
-      background: rgba(255, 255, 255, 0.7);
-      background-clip: padding-box;
-    }
-
+    .history-list::-webkit-scrollbar { height: 6px; }
+    .history-list::-webkit-scrollbar-track { background: transparent; }
+    .history-list::-webkit-scrollbar-thumb { background: rgba(56, 189, 248, 0.4); border-radius: 10px; }
+    .history-list::-webkit-scrollbar-thumb:hover { background: var(--primary-color); }
+    
     .history-item {
-      background: rgba(255, 255, 255, 0.15);
-      color: #ffffff;
-      padding: 0.4rem 0.8rem;
-      border-radius: 12px;
-      font-size: 0.85rem;
+      background: rgba(56, 189, 248, 0.1);
+      color: var(--light-text);
+      padding: 0.4rem 0.9rem;
+      border-radius: 10px;
+      font-size: 0.9rem;
       font-weight: 600;
-      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      animation: slideIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+      border: 1px solid rgba(56, 189, 248, 0.2);
+      animation: slideIn 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
       transition: all 0.3s ease;
-      display: inline-flex;
-      align-items: center;
+      white-space: nowrap;
     }
 
     .history-item:hover {
-      transform: scale(1.03);
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-      background: rgba(255, 255, 255, 0.25);
+      transform: translateY(-2px);
+      background: rgba(56, 189, 248, 0.2);
+      border-color: rgba(56, 189, 248, 0.4);
     }
-
-    .history-item.latest {
-      animation: pulseGlow 1.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-    }
-
-    .history-item.removing {
-      animation: pulseFadeOut 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-    }
+    
+    .history-item.latest { animation: pulseGlow 1.5s ease-out forwards; }
+    .history-item.removing { animation: pulseFadeOut 1s ease-out forwards; }
 
     .footer {
       margin-top: 2.5rem;
-      font-size: 1.1rem;
-      color: #f0f9ff;
-      opacity: 0.9;
-      text-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+      font-size: 0.9rem;
+      color: var(--light-text);
+      opacity: 0.6;
     }
 
     .dialog-overlay {
       display: none;
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.8);
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(5px);
       justify-content: center;
       align-items: center;
       z-index: 1000;
       opacity: 0;
-      transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: opacity 0.3s ease;
     }
 
-    .dialog-overlay.show {
-      display: flex;
-      opacity: 1;
-    }
+    .dialog-overlay.show { display: flex; opacity: 1; }
 
     .dialog-container {
-      background: rgba(255, 255, 255, 0.95);
-      color: #1e3a8a;
+      background: #0B1D33;
+      color: var(--light-text);
       padding: 2.5rem;
-      border-radius: 25px;
+      border-radius: 20px;
       text-align: center;
-      box-shadow: 0 25px 70px rgba(0, 0, 0, 0.4);
+      box-shadow: 0 0 50px rgba(56, 189, 248, 0.3);
       width: 90%;
-      max-width: 500px;
-      transform: scale(0.7);
+      max-width: 450px;
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      transform: scale(0.8);
       opacity: 0;
-      transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-      backdrop-filter: blur(12px);
-    }
-
-    .dialog-overlay.show .dialog-container {
-      transform: scale(1);
-      opacity: 1;
-    }
-
-    .dialog-buttons {
-      display: flex;
-      gap: 1.2rem;
-      justify-content: center;
-      margin-top: 2rem;
-    }
-
-    .dialog-confirm, .dialog-cancel {
-      padding: 0.9rem 2.5rem;
-      font-size: 1.1rem;
-      font-weight: 700;
-      border: none;
-      border-radius: 15px;
-      cursor: pointer;
       transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
-      color: #ffffff;
     }
 
-    .dialog-confirm {
-      background: linear-gradient(135deg, #0ea5e9, #1e3a8a);
-    }
+    .dialog-overlay.show .dialog-container { transform: scale(1); opacity: 1; }
+    .dialog-container p { font-size: 1.2rem; line-height: 1.6; }
+    .dialog-buttons { display: flex; gap: 1rem; justify-content: center; margin-top: 2rem; }
+    .dialog-confirm { background: var(--primary-color); color: #0B1D33; }
+    .dialog-cancel { background: var(--danger-color); color: #fff; }
 
-    .dialog-cancel {
-      background: linear-gradient(135deg, #ef4444, #b91c1c);
-    }
-
-    .dialog-confirm:hover, .dialog-cancel:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
-    }
-
-    /* Animações */
     @keyframes floatIn {
-      0% { opacity: 0; transform: translateY(60px) scale(0.9); }
-      100% { opacity: 1; transform: translateY(0) scale(1); }
+      from { opacity: 0; transform: translateY(50px) scale(0.95); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
     }
-
     @keyframes fadeInDown {
-      0% { opacity: 0; transform: translateY(-40px); }
-      100% { opacity: 1; transform: translateY(0); }
+      from { opacity: 0; transform: translateY(-30px); }
+      to { opacity: 1; transform: translateY(0); }
     }
-
     @keyframes fadeInUp {
-      0% { opacity: 0; transform: translateY(40px); }
-      100% { opacity: 1; transform: translateY(0); }
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
     }
-
     @keyframes slideIn {
-      0% { opacity: 0; transform: translateX(-30px); }
-      100% { opacity: 1; transform: translateX(0); }
+      from { opacity: 0; transform: translateX(-20px); }
+      to { opacity: 1; transform: translateX(0); }
     }
-
     @keyframes pulseGlow {
-      0% { transform: scale(1); box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15); }
-      50% { transform: scale(1.05); box-shadow: 0 0 15px rgba(14, 165, 233, 0.9); }
-      100% { transform: scale(1); box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15); }
+      0%, 100% { box-shadow: 0 0 10px rgba(56, 189, 248, 0.2); }
+      50% { box-shadow: 0 0 25px rgba(56, 189, 248, 0.6); }
     }
-
     @keyframes pulseFadeOut {
-      0% { transform: scale(1); opacity: 1; }
-      50% { transform: scale(1.05); box-shadow: 0 0 15px rgba(14, 165, 233, 0.9); }
-      100% { transform: scale(0.7); opacity: 0; }
+      from { transform: scale(1); opacity: 1; }
+      to { transform: scale(0.8); opacity: 0; }
     }
-
     @keyframes totalPulseGlow {
-      0% { transform: scale(1); text-shadow: none; }
-      50% { transform: scale(1.3); text-shadow: 0 0 25px rgba(250, 204, 21, 1); }
-      100% { transform: scale(1); text-shadow: none; }
+      0%, 100% { transform: scale(1); text-shadow: 0 0 15px rgba(56, 189, 248, 0); }
+      50% { transform: scale(1.15); text-shadow: 0 0 35px var(--primary-color); }
     }
-
     @media (max-width: 480px) {
-      .container {
-        padding: 2rem;
-      }
-
-      h1 {
-        font-size: 2.2rem;
-      }
-
-      label, input[type="text"], .result {
-        font-size: 1.1rem;
-      }
-
-      #total-inspected {
-        font-size: 1.8rem;
-      }
-
-      button {
-        padding: 0.7rem 2rem;
-      }
-
-      .history strong {
-        font-size: 1rem;
-      }
-
-      .history-item {
-        font-size: 0.75rem;
-        padding: 0.3rem 0.6rem;
-        border-radius: 10px;
-      }
-
-      .history-list {
-        max-height: 36px;
-        gap: 0.3rem;
-      }
-
-      .footer {
-        font-size: 0.95rem;
-      }
+      .container { padding: 2rem 1.5rem; }
+      h1 { font-size: 2rem; }
+      label, .result { font-size: 1rem; }
+      #total-inspected { font-size: 2rem; }
+      button { padding: 0.7rem 1.5rem; font-size: 0.9rem; }
+      .history-item { font-size: 0.8rem; padding: 0.3rem 0.7rem; }
+      .footer { font-size: 0.8rem; }
     }
   </style>
 </head>
@@ -427,7 +335,7 @@
     <h1><i class="fas fa-boxes"></i> Contagem de Cargas</h1>
     <form id="inspection-form">
       <label for="quantity">Número de Cargas Inspecionadas:</label>
-      <input type="text" id="quantity" name="quantity" required autocomplete="off" inputmode="numeric" placeholder="Digite aqui">
+      <input type="text" id="quantity" name="quantity" required autocomplete="off" inputmode="numeric" placeholder="Digite o valor">
       <div class="btn-container">
         <button class="btn-ok" type="submit"><i class="fas fa-check"></i> OK</button>
         <button class="btn-correct" id="correct-button" type="button"><i class="fas fa-undo"></i> Corrigir</button>
@@ -438,7 +346,7 @@
       <strong>Total de Cargas:</strong> <span id="total-inspected">0</span>
     </div>
     <div class="history">
-      <strong>Histórico:</strong>
+      <strong>Últimos Lançamentos:</strong>
       <ul id="history-list" class="history-list"></ul>
     </div>
     <div class="footer">
@@ -456,49 +364,44 @@
   </div>
 
   <script>
-    // Partículas de fundo com conexões
+    // Script de Partículas (sem alterações)
     const canvas = document.getElementById('particles');
     const ctx = canvas.getContext('2d');
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
-
-    const particlesArray = [];
-    const numberOfParticles = 80;
-
+    let particlesArray = [];
+    const numberOfParticles = 60; 
     class Particle {
       constructor() {
         this.x = Math.random() * canvas.width;
         this.y = Math.random() * canvas.height;
-        this.size = Math.random() * 3 + 1;
-        this.speedX = Math.random() * 0.6 - 0.3;
-        this.speedY = Math.random() * 0.6 - 0.3;
+        this.size = Math.random() * 2 + 1;
+        this.speedX = Math.random() * 0.4 - 0.2;
+        this.speedY = Math.random() * 0.4 - 0.2;
       }
-
       update() {
         this.x += this.speedX;
         this.y += this.speedY;
-        if (this.size > 0.2) this.size -= 0.01;
-        if (this.x < 0 || this.x > canvas.width) this.speedX = -this.speedX;
-        if (this.y < 0 || this.y > canvas.height) this.speedY = -this.speedY;
+        if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+        if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
       }
-
       draw() {
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+        ctx.fillStyle = 'rgba(224, 242, 254, 0.8)';
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
         ctx.fill();
       }
     }
-
     function connectParticles() {
+      const maxDistance = 150; 
       for (let i = 0; i < particlesArray.length; i++) {
-        for (let j = i + 1; j < particlesArray.length; j++) {
+        for (let j = i; j < particlesArray.length; j++) {
           const dx = particlesArray[i].x - particlesArray[j].x;
           const dy = particlesArray[i].y - particlesArray[j].y;
           const distance = Math.sqrt(dx * dx + dy * dy);
-          if (distance < 120) {
-            ctx.strokeStyle = `rgba(255, 255, 255, ${1 - distance / 120})`;
-            ctx.lineWidth = 0.5;
+          if (distance < maxDistance) {
+            ctx.strokeStyle = `rgba(56, 189, 248, ${1 - distance / maxDistance})`;
+            ctx.lineWidth = 0.3;
             ctx.beginPath();
             ctx.moveTo(particlesArray[i].x, particlesArray[i].y);
             ctx.lineTo(particlesArray[j].x, particlesArray[j].y);
@@ -507,37 +410,30 @@
         }
       }
     }
-
     function init() {
+      particlesArray = [];
       for (let i = 0; i < numberOfParticles; i++) {
         particlesArray.push(new Particle());
       }
     }
-
     function animate() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       connectParticles();
-      for (let i = 0; i < particlesArray.length; i++) {
-        particlesArray[i].update();
-        particlesArray[i].draw();
-        if (particlesArray[i].size <= 0.2) {
-          particlesArray.splice(i, 1);
-          i--;
-          particlesArray.push(new Particle());
-        }
-      }
+      particlesArray.forEach(p => {
+        p.update();
+        p.draw();
+      });
       requestAnimationFrame(animate);
     }
-
     window.addEventListener('resize', () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
+      init();
     });
-
     init();
     animate();
 
-    // Lógica principal
+    // Lógica Principal (COM AS CORREÇÕES)
     document.addEventListener('DOMContentLoaded', function () {
       const form = document.getElementById('inspection-form');
       const totalInspectedSpan = document.getElementById('total-inspected');
@@ -552,7 +448,6 @@
       let totalInspected = 0;
       let history = [];
       let confirmAction = null;
-
       if (localStorage.getItem('totalInspected')) {
         totalInspected = parseInt(localStorage.getItem('totalInspected'), 10);
         totalInspectedSpan.textContent = totalInspected.toLocaleString('pt-BR');
@@ -561,50 +456,38 @@
         history = JSON.parse(localStorage.getItem('history'));
         updateHistory();
       }
-
       function formatNumber(value) {
         const cleaned = value.replace(/\D/g, '');
         return cleaned.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
       }
-
-      quantityInput.addEventListener('input', function () {
-        this.value = formatNumber(this.value);
-      });
-
+      quantityInput.addEventListener('input', function () { this.value = formatNumber(this.value); });
       function saveData() {
         localStorage.setItem('totalInspected', totalInspected);
         localStorage.setItem('history', JSON.stringify(history));
       }
-
       function updateHistory() {
         historyList.innerHTML = '';
-        // Inverter a ordem de exibição para que o último item apareça à esquerda
-        history.slice().reverse().forEach((quantity, index, reversedArray) => {
+        history.slice().reverse().forEach((quantity, index) => {
           const item = document.createElement('li');
           item.className = 'history-item';
-          // O primeiro item da lista invertida (último do histórico) é o mais recente
           if (index === 0 && history.length > 0) {
             item.classList.add('latest');
           }
           item.textContent = quantity.toLocaleString('pt-BR');
           historyList.appendChild(item);
         });
-        // Rolar para a esquerda para mostrar o item mais recente
         historyList.scrollLeft = 0;
       }
-
       function animateTotal() {
         totalInspectedSpan.classList.remove('updating');
         void totalInspectedSpan.offsetWidth;
         totalInspectedSpan.classList.add('updating');
       }
-
       form.addEventListener('submit', function (event) {
         event.preventDefault();
         const rawValue = quantityInput.value || '0';
         const quantity = parseInt(rawValue.replace(/\./g, ''), 10);
-
-        if (!isNaN(quantity) && quantity >= 0) {
+        if (!isNaN(quantity) && quantity > 0) {
           totalInspected += quantity;
           totalInspectedSpan.textContent = totalInspected.toLocaleString('pt-BR');
           animateTotal();
@@ -612,33 +495,42 @@
           updateHistory();
           saveData();
           quantityInput.value = '';
+        } else if (quantity === 0) {
+            showSimpleAlert("Por favor, insira um número maior que zero."); // CORRIGIDO
         } else {
-          alert("Por favor, insira um número válido.");
+            showSimpleAlert("Por favor, insira um número válido."); // CORRIGIDO
         }
       });
-
+      function showSimpleAlert(message) {
+        dialogMessage.textContent = message;
+        dialogCancel.style.display = 'none';
+        dialogConfirm.textContent = 'OK';
+        dialogOverlay.style.display = 'flex';
+        setTimeout(() => dialogOverlay.classList.add('show'), 10);
+        confirmAction = hideDialog;
+      }
       function showDialog(message, onConfirm) {
         dialogMessage.textContent = message;
         dialogOverlay.style.display = 'flex';
         setTimeout(() => dialogOverlay.classList.add('show'), 10);
         confirmAction = onConfirm;
       }
-
       function hideDialog() {
         dialogOverlay.classList.remove('show');
-        setTimeout(() => dialogOverlay.style.display = 'none', 400);
+        setTimeout(() => {
+          dialogOverlay.style.display = 'none';
+          dialogCancel.style.display = 'flex'; // Reset
+          dialogConfirm.textContent = 'Confirmar'; // Reset
+        }, 400);
       }
-
       dialogConfirm.addEventListener('click', function () {
         if (confirmAction) confirmAction();
         hideDialog();
       });
-
       dialogCancel.addEventListener('click', hideDialog);
-
       correctButton.addEventListener('click', function () {
         if (history.length > 0) {
-          showDialog("Deseja corrigir o último valor inserido?", function () {
+          showDialog("Tem certeza que deseja remover o último valor lançado?", function () {
             const lastQuantity = history.pop();
             totalInspected -= lastQuantity;
             totalInspectedSpan.textContent = totalInspected.toLocaleString('pt-BR');
@@ -650,19 +542,18 @@
               setTimeout(() => {
                 updateHistory();
                 saveData();
-              }, 1200);
+              }, 1000);
             } else {
               updateHistory();
               saveData();
             }
           });
         } else {
-          alert("Não há valores no histórico para corrigir.");
+          showSimpleAlert("Não há valores no histórico para corrigir."); // Alterado para o alerta customizado
         }
       });
-
       clearButton.addEventListener('click', function () {
-        showDialog("Deseja limpar o total e o histórico?", function () {
+        showDialog("ATENÇÃO: Isso limpará todo o total e o histórico. Deseja continuar?", function () {
           totalInspected = 0;
           history = [];
           totalInspectedSpan.textContent = totalInspected.toLocaleString('pt-BR');
