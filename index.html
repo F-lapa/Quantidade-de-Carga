@@ -6,14 +6,14 @@
   <title>Contagem de Cargas Inspecionadas</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=Space+Grotesk:wght@400;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     :root {
-      --primary: #00d4ff;
-      --primary-dark: #00a8cc;
-      --secondary: #7000ff;
-      --accent: #ff006e;
+      --primary: #00f0ff;
+      --primary-dark: #00c8d6;
+      --secondary: #0099ff;
+      --accent: #00f0ff;
       --success: #00ff88;
       --warning: #ffbe0b;
       --danger: #ff006e;
@@ -22,10 +22,10 @@
       --glass-border: rgba(255, 255, 255, 0.08);
       --text-primary: #ffffff;
       --text-secondary: #94a3b8;
-      --gradient-1: linear-gradient(135deg, #00d4ff 0%, #7000ff 100%);
+      --gradient-1: linear-gradient(135deg, #00f0ff 0%, #0099ff 50%, #0066ff 100%);
       --gradient-2: linear-gradient(135deg, #ff006e 0%, #ffbe0b 100%);
-      --gradient-3: linear-gradient(135deg, #00ff88 0%, #00d4ff 100%);
-      --shadow-glow: 0 0 40px rgba(0, 212, 255, 0.3);
+      --gradient-3: linear-gradient(135deg, #00ff88 0%, #00f0ff 100%);
+      --shadow-glow: 0 0 60px rgba(0, 240, 255, 0.4);
       --shadow-card: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
     }
 
@@ -60,8 +60,8 @@
       width: 100%;
       height: 100%;
       background-image: 
-        linear-gradient(rgba(0, 212, 255, 0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0, 212, 255, 0.03) 1px, transparent 1px);
+        linear-gradient(rgba(0, 240, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 240, 255, 0.03) 1px, transparent 1px);
       background-size: 50px 50px;
       pointer-events: none;
       z-index: 0;
@@ -73,7 +73,7 @@
       height: 600px;
       border-radius: 50%;
       filter: blur(100px);
-      opacity: 0.15;
+      opacity: 0.2;
       pointer-events: none;
       z-index: 0;
     }
@@ -110,7 +110,7 @@
       align-items: center;
     }
 
-    /* Header - Agora só com subtítulo */
+    /* Header */
     .header {
       text-align: center;
       margin-bottom: 1.5rem;
@@ -133,9 +133,10 @@
     .main-title i {
       color: var(--primary);
       font-size: 1.1rem;
+      text-shadow: 0 0 20px rgba(0, 240, 255, 0.5);
     }
 
-    /* Main Card - Mais compacto */
+    /* Main Card */
     .main-card {
       background: var(--glass-bg);
       backdrop-filter: blur(20px);
@@ -157,26 +158,28 @@
       right: 0;
       height: 1px;
       background: linear-gradient(90deg, transparent, var(--primary), transparent);
-      opacity: 0.5;
+      opacity: 0.6;
+      box-shadow: 0 0 10px var(--primary);
     }
 
-    /* Total Display - Reduzido */
+    /* Total Display */
     .total-section {
       text-align: center;
       margin-bottom: 1.5rem;
-      padding: 1.5rem;
-      background: rgba(0, 212, 255, 0.05);
+      padding: 2rem 1.5rem;
+      background: rgba(0, 240, 255, 0.05);
       border-radius: 20px;
-      border: 1px solid rgba(0, 212, 255, 0.1);
+      border: 1px solid rgba(0, 240, 255, 0.15);
       position: relative;
       overflow: hidden;
+      box-shadow: inset 0 0 30px rgba(0, 240, 255, 0.1);
     }
 
     .total-section::before {
       content: '';
       position: absolute;
       inset: 0;
-      background: radial-gradient(circle at center, rgba(0, 212, 255, 0.1) 0%, transparent 70%);
+      background: radial-gradient(circle at center, rgba(0, 240, 255, 0.15) 0%, transparent 70%);
       opacity: 0;
       transition: opacity 0.3s;
     }
@@ -186,26 +189,29 @@
     }
 
     .total-label {
-      font-size: 0.8rem;
+      font-size: 0.9rem;
       text-transform: uppercase;
-      letter-spacing: 2px;
-      color: var(--text-secondary);
-      margin-bottom: 0.3rem;
+      letter-spacing: 3px;
+      color: var(--primary);
+      margin-bottom: 0.5rem;
       font-weight: 600;
+      text-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
     }
 
     .total-value {
       font-family: 'Space Grotesk', sans-serif;
-      font-size: 3.5rem;
-      font-weight: 700;
-      background: var(--gradient-1);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+      font-size: 6rem;
+      font-weight: 800;
+      color: var(--primary);
       line-height: 1;
       position: relative;
       display: inline-block;
       transition: transform 0.3s ease;
+      text-shadow: 
+        0 0 10px rgba(0, 240, 255, 0.5),
+        0 0 20px rgba(0, 240, 255, 0.3),
+        0 0 40px rgba(0, 240, 255, 0.2);
+      letter-spacing: -2px;
     }
 
     .total-value.updating {
@@ -214,18 +220,18 @@
 
     @keyframes numberPop {
       0% { transform: scale(1); }
-      50% { transform: scale(1.2); filter: brightness(1.5); }
+      50% { transform: scale(1.15); text-shadow: 0 0 60px rgba(0, 240, 255, 0.8), 0 0 100px rgba(0, 240, 255, 0.5); }
       100% { transform: scale(1); }
     }
 
     .total-suffix {
-      font-size: 1rem;
+      font-size: 1.1rem;
       color: var(--text-secondary);
-      margin-top: 0.3rem;
+      margin-top: 0.5rem;
       font-weight: 400;
     }
 
-    /* Input Section - Compacto */
+    /* Input Section */
     .input-section {
       margin-bottom: 1.5rem;
     }
@@ -252,8 +258,8 @@
 
     .input-field:focus {
       border-color: var(--primary);
-      background: rgba(0, 212, 255, 0.05);
-      box-shadow: 0 0 25px rgba(0, 212, 255, 0.2);
+      background: rgba(0, 240, 255, 0.05);
+      box-shadow: 0 0 30px rgba(0, 240, 255, 0.2);
     }
 
     .input-field::placeholder {
@@ -270,7 +276,7 @@
       opacity: 0.7;
     }
 
-    /* Action Buttons - Mais compactos */
+    /* Action Buttons */
     .actions {
       display: grid;
       grid-template-columns: 2fr 1fr 1fr;
@@ -314,12 +320,12 @@
     .btn-primary {
       background: var(--gradient-1);
       color: white;
-      box-shadow: 0 8px 25px rgba(0, 212, 255, 0.3);
+      box-shadow: 0 8px 25px rgba(0, 240, 255, 0.3);
     }
 
     .btn-primary:hover {
       transform: translateY(-2px);
-      box-shadow: 0 15px 35px rgba(0, 212, 255, 0.4);
+      box-shadow: 0 15px 35px rgba(0, 240, 255, 0.5);
     }
 
     .btn-warning {
@@ -352,7 +358,7 @@
       transform: translateY(-1px);
     }
 
-    /* History Section - Compacta */
+    /* History Section */
     .history-section {
       margin-top: 1.5rem;
       padding-top: 1.5rem;
@@ -412,8 +418,8 @@
 
     .history-item {
       flex-shrink: 0;
-      background: rgba(0, 212, 255, 0.1);
-      border: 1px solid rgba(0, 212, 255, 0.2);
+      background: rgba(0, 240, 255, 0.1);
+      border: 1px solid rgba(0, 240, 255, 0.2);
       padding: 0.6rem 1rem;
       border-radius: 10px;
       font-family: 'Space Grotesk', sans-serif;
@@ -427,22 +433,22 @@
     }
 
     .history-item:hover {
-      background: rgba(0, 212, 255, 0.2);
+      background: rgba(0, 240, 255, 0.2);
       transform: translateY(-2px);
-      box-shadow: 0 4px 15px rgba(0, 212, 255, 0.2);
+      box-shadow: 0 4px 15px rgba(0, 240, 255, 0.2);
     }
 
     .history-item.latest {
       background: var(--gradient-1);
       color: white;
       border-color: transparent;
-      box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3);
+      box-shadow: 0 4px 20px rgba(0, 240, 255, 0.4);
       animation: latestPulse 2s infinite;
     }
 
     @keyframes latestPulse {
-      0%, 100% { box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3); }
-      50% { box-shadow: 0 4px 25px rgba(0, 212, 255, 0.5); }
+      0%, 100% { box-shadow: 0 4px 20px rgba(0, 240, 255, 0.4); }
+      50% { box-shadow: 0 4px 35px rgba(0, 240, 255, 0.6); }
     }
 
     .history-item.removing {
@@ -458,50 +464,7 @@
       to { opacity: 0; transform: translateX(20px) scale(0.9); }
     }
 
-    /* Stats Grid - Agora só 2 colunas e mais compacto */
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 0.8rem;
-      margin-top: 1.5rem;
-    }
-
-    .stat-card {
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid var(--glass-border);
-      border-radius: 14px;
-      padding: 1rem;
-      text-align: center;
-      transition: all 0.3s ease;
-    }
-
-    .stat-card:hover {
-      background: rgba(255, 255, 255, 0.05);
-      transform: translateY(-2px);
-    }
-
-    .stat-icon {
-      font-size: 1.2rem;
-      margin-bottom: 0.3rem;
-      opacity: 0.8;
-    }
-
-    .stat-value {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 1.3rem;
-      font-weight: 700;
-      color: var(--text-primary);
-    }
-
-    .stat-label {
-      font-size: 0.7rem;
-      color: var(--text-secondary);
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      margin-top: 0.2rem;
-    }
-
-    /* Modal - Compacto */
+    /* Modal */
     .modal-overlay {
       position: fixed;
       inset: 0;
@@ -604,7 +567,7 @@
 
     .btn-modal-confirm:hover {
       transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(0, 212, 255, 0.3);
+      box-shadow: 0 8px 25px rgba(0, 240, 255, 0.3);
     }
 
     .btn-modal-cancel {
@@ -617,7 +580,7 @@
       background: rgba(255, 255, 255, 0.15);
     }
 
-    /* Toast Notification - Compacto */
+    /* Toast Notification */
     .toast {
       position: fixed;
       bottom: 1.5rem;
@@ -672,7 +635,7 @@
       color: var(--text-secondary);
     }
 
-    /* Footer - Compacto */
+    /* Footer */
     .footer {
       margin-top: 1.5rem;
       text-align: center;
@@ -685,6 +648,7 @@
     .footer-brand {
       font-weight: 600;
       color: var(--primary);
+      text-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
     }
 
     /* Animations */
@@ -736,7 +700,7 @@
       }
 
       .total-value {
-        font-size: 2.8rem;
+        font-size: 4.5rem;
       }
 
       .actions {
@@ -749,18 +713,12 @@
         font-size: 0.85rem;
       }
 
-      .stats-grid {
-        grid-template-columns: 1fr;
-        gap: 0.6rem;
-      }
-
       .main-title {
-        font-size: 1.1rem;
+        font-size: 1rem;
         letter-spacing: 2px;
       }
     }
   </style>
-<base target="_blank">
 </head>
 <body>
   <div class="bg-grid"></div>
@@ -824,23 +782,6 @@
           <div class="empty-state">Nenhum lançamento registrado</div>
         </div>
       </div>
-
-      <div class="stats-grid">
-        <div class="stat-card">
-          <div class="stat-icon" style="color: var(--primary);">
-            <i class="fas fa-calculator"></i>
-          </div>
-          <div class="stat-value" id="stat-avg">0</div>
-          <div class="stat-label">Média por Lançamento</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon" style="color: var(--warning);">
-            <i class="fas fa-layer-group"></i>
-          </div>
-          <div class="stat-value" id="stat-count">0</div>
-          <div class="stat-label">Total de Lançamentos</div>
-        </div>
-      </div>
     </main>
 
     <footer class="footer">
@@ -900,7 +841,7 @@
         this.size = Math.random() * 2 + 0.5;
         this.speedX = Math.random() * 1 - 0.5;
         this.speedY = Math.random() * 1 - 0.5;
-        this.color = Math.random() > 0.5 ? '#00d4ff' : '#7000ff';
+        this.color = Math.random() > 0.5 ? '#00f0ff' : '#0099ff';
       }
 
       update() {
@@ -954,7 +895,7 @@
           
           if (distance < 150) {
             ctx.beginPath();
-            ctx.strokeStyle = `rgba(0, 212, 255, ${0.1 * (1 - distance / 150)})`;
+            ctx.strokeStyle = `rgba(0, 240, 255, ${0.1 * (1 - distance / 150)})`;
             ctx.lineWidth = 0.5;
             ctx.moveTo(particles[i].x, particles[i].y);
             ctx.lineTo(particles[j].x, particles[j].y);
@@ -991,8 +932,6 @@
       const modalConfirm = document.getElementById('modal-confirm');
       const modalCancel = document.getElementById('modal-cancel');
       const toast = document.getElementById('toast');
-      const statAvg = document.getElementById('stat-avg');
-      const statCount = document.getElementById('stat-count');
 
       let totalInspected = 0;
       let history = [];
@@ -1011,8 +950,6 @@
           history = JSON.parse(savedHistory);
           updateHistory();
         }
-        
-        updateStats();
       };
 
       const saveData = () => {
@@ -1037,12 +974,6 @@
           totalInspectedSpan.classList.remove('updating');
           totalSection.classList.remove('updating');
         }, 600);
-      };
-
-      const updateStats = () => {
-        statCount.textContent = history.length;
-        const avg = history.length > 0 ? Math.round(totalInspected / history.length) : 0;
-        statAvg.textContent = avg.toLocaleString('pt-BR');
       };
 
       const updateHistory = () => {
@@ -1128,7 +1059,6 @@
         
         updateDisplay();
         updateHistory();
-        updateStats();
         saveData();
         
         quantityInput.value = '';
@@ -1159,7 +1089,6 @@
             setTimeout(() => {
               updateDisplay();
               updateHistory();
-              updateStats();
               saveData();
               showToast('success', 'Corrigido', `Removido: ${removed.toLocaleString('pt-BR')} cargas`);
             }, 400);
@@ -1181,7 +1110,6 @@
             
             updateDisplay();
             updateHistory();
-            updateStats();
             saveData();
             showToast('success', 'Dados limpos', 'Todos os lançamentos foram removidos');
           }
