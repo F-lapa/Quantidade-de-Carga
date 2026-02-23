@@ -198,14 +198,20 @@
       text-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
     }
 
+    .total-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      position: relative;
+    }
+
     .total-value {
       font-family: 'Space Grotesk', sans-serif;
       font-size: 6rem;
       font-weight: 800;
       color: var(--primary);
       line-height: 1;
-      position: relative;
-      display: inline-block;
       transition: transform 0.3s ease;
       text-shadow: 
         0 0 10px rgba(0, 240, 255, 0.5),
@@ -222,6 +228,61 @@
       0% { transform: scale(1); }
       50% { transform: scale(1.15); text-shadow: 0 0 60px rgba(0, 240, 255, 0.8), 0 0 100px rgba(0, 240, 255, 0.5); }
       100% { transform: scale(1); }
+    }
+
+    .btn-copy {
+      background: rgba(0, 240, 255, 0.1);
+      border: 1px solid rgba(0, 240, 255, 0.3);
+      color: var(--primary);
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 1.1rem;
+      position: relative;
+    }
+
+    .btn-copy:hover {
+      background: rgba(0, 240, 255, 0.2);
+      border-color: var(--primary);
+      transform: scale(1.1);
+      box-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
+    }
+
+    .btn-copy:active {
+      transform: scale(0.95);
+    }
+
+    .btn-copy.copied {
+      background: var(--success);
+      border-color: var(--success);
+      color: var(--dark-bg);
+    }
+
+    .copy-tooltip {
+      position: absolute;
+      bottom: -35px;
+      left: 50%;
+      transform: translateX(-50%) scale(0);
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      padding: 0.4rem 0.8rem;
+      border-radius: 8px;
+      font-size: 0.75rem;
+      white-space: nowrap;
+      opacity: 0;
+      transition: all 0.3s ease;
+      pointer-events: none;
+      backdrop-filter: blur(10px);
+    }
+
+    .btn-copy:hover .copy-tooltip {
+      transform: translateX(-50%) scale(1);
+      opacity: 1;
     }
 
     .total-suffix {
@@ -416,8 +477,13 @@
       opacity: 0.5;
     }
 
-    .history-item {
+    .history-item-wrapper {
+      position: relative;
       flex-shrink: 0;
+      animation: slideIn 0.4s ease-out;
+    }
+
+    .history-item {
       background: rgba(0, 240, 255, 0.1);
       border: 1px solid rgba(0, 240, 255, 0.2);
       padding: 0.6rem 1rem;
@@ -426,10 +492,11 @@
       font-weight: 600;
       font-size: 0.95rem;
       color: var(--primary);
-      position: relative;
-      animation: slideIn 0.4s ease-out;
-      transition: all 0.3s ease;
       cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
     }
 
     .history-item:hover {
@@ -453,6 +520,43 @@
 
     .history-item.removing {
       animation: slideOut 0.4s ease-out forwards;
+    }
+
+    .delete-btn {
+      position: absolute;
+      top: -10px;
+      right: -10px;
+      width: 28px;
+      height: 28px;
+      background: var(--danger);
+      border: 2px solid var(--dark-bg);
+      border-radius: 50%;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      opacity: 0;
+      transform: scale(0);
+      transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      font-size: 0.75rem;
+      box-shadow: 0 4px 15px rgba(255, 0, 110, 0.4);
+      z-index: 10;
+    }
+
+    .history-item-wrapper:hover .delete-btn,
+    .history-item-wrapper.active .delete-btn {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .delete-btn:hover {
+      transform: scale(1.2) !important;
+      box-shadow: 0 6px 20px rgba(255, 0, 110, 0.6);
+    }
+
+    .delete-btn:active {
+      transform: scale(0.9) !important;
     }
 
     @keyframes slideIn {
@@ -700,7 +804,13 @@
       }
 
       .total-value {
-        font-size: 4.5rem;
+        font-size: 4rem;
+      }
+
+      .btn-copy {
+        width: 38px;
+        height: 38px;
+        font-size: 1rem;
       }
 
       .actions {
@@ -717,8 +827,30 @@
         font-size: 1rem;
         letter-spacing: 2px;
       }
+
+      .delete-btn {
+        width: 24px;
+        height: 24px;
+        font-size: 0.7rem;
+        top: -8px;
+        right: -8px;
+      }
+    }
+
+    /* Touch device optimizations */
+    @media (hover: none) {
+      .delete-btn {
+        opacity: 0;
+        transform: scale(0);
+      }
+      
+      .history-item-wrapper.active .delete-btn {
+        opacity: 1;
+        transform: scale(1);
+      }
     }
   </style>
+<base target="_blank">
 </head>
 <body>
   <div class="bg-grid"></div>
@@ -737,8 +869,14 @@
     <main class="main-card">
       <div class="total-section" id="total-section">
         <div class="total-label">Total de Cargas Inspecionadas</div>
-        <div class="total-value" id="total-inspected">0</div>
-        <div class="total-suffix">unidades</div>
+        <div class="total-wrapper">
+          <div class="total-value" id="total-inspected">0</div>
+          <button class="btn-copy" id="btn-copy" title="Copiar quantidade">
+            <i class="fas fa-copy"></i>
+            <span class="copy-tooltip">Copiar</span>
+          </button>
+        </div>
+        <div class="total-suffix">cargas</div>
       </div>
 
       <form id="inspection-form" class="input-section">
@@ -921,6 +1059,7 @@
       const quantityInput = document.getElementById('quantity');
       const totalInspectedSpan = document.getElementById('total-inspected');
       const totalSection = document.getElementById('total-section');
+      const btnCopy = document.getElementById('btn-copy');
       const historyList = document.getElementById('history-list');
       const historyCount = document.getElementById('history-count');
       const correctButton = document.getElementById('correct-button');
@@ -987,21 +1126,82 @@
         const reversed = [...history].reverse();
         
         reversed.forEach((qty, index) => {
+          const wrapper = document.createElement('div');
+          wrapper.className = 'history-item-wrapper';
+          
           const item = document.createElement('div');
           item.className = 'history-item';
           if (index === 0) item.classList.add('latest');
           item.textContent = qty.toLocaleString('pt-BR');
           
-          item.addEventListener('click', () => {
-            showToast('info', 'Valor', `${qty.toLocaleString('pt-BR')} cargas`);
+          const deleteBtn = document.createElement('button');
+          deleteBtn.className = 'delete-btn';
+          deleteBtn.innerHTML = '<i class="fas fa-trash"></i>';
+          deleteBtn.title = 'Deletar este lançamento';
+          
+          // Click on item to show delete button (for touch devices)
+          item.addEventListener('click', (e) => {
+            if (e.target !== deleteBtn && !deleteBtn.contains(e.target)) {
+              // Remove active class from all other items
+              document.querySelectorAll('.history-item-wrapper').forEach(w => {
+                if (w !== wrapper) w.classList.remove('active');
+              });
+              // Toggle active on this one
+              wrapper.classList.toggle('active');
+            }
           });
           
-          historyList.appendChild(item);
+          // Delete functionality
+          deleteBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const originalIndex = history.length - 1 - index;
+            showModal('danger', 'Deletar lançamento?', 
+              `Remover ${qty.toLocaleString('pt-BR')} cargas do total?`, 
+              () => {
+                totalInspected -= qty;
+                history.splice(originalIndex, 1);
+                
+                wrapper.style.animation = 'slideOut 0.4s ease-out forwards';
+                
+                setTimeout(() => {
+                  updateDisplay();
+                  updateHistory();
+                  saveData();
+                  showToast('success', 'Deletado', `Removido: ${qty.toLocaleString('pt-BR')} cargas`);
+                }, 400);
+              }
+            );
+          });
+          
+          wrapper.appendChild(item);
+          wrapper.appendChild(deleteBtn);
+          historyList.appendChild(wrapper);
         });
 
         historyCount.textContent = `${history.length} ${history.length === 1 ? 'item' : 'itens'}`;
         historyList.scrollLeft = 0;
       };
+
+      // Copy functionality
+      btnCopy.addEventListener('click', async () => {
+        try {
+          await navigator.clipboard.writeText(totalInspected.toString());
+          
+          // Visual feedback
+          const originalHTML = btnCopy.innerHTML;
+          btnCopy.classList.add('copied');
+          btnCopy.innerHTML = '<i class="fas fa-check"></i>';
+          
+          showToast('success', 'Copiado!', `Total de ${totalInspected.toLocaleString('pt-BR')} cargas copiado`);
+          
+          setTimeout(() => {
+            btnCopy.classList.remove('copied');
+            btnCopy.innerHTML = originalHTML;
+          }, 2000);
+        } catch (err) {
+          showToast('error', 'Erro', 'Não foi possível copiar');
+        }
+      });
 
       const showModal = (type, title, message, onConfirm) => {
         modalIcon.className = 'modal-icon ' + type;
@@ -1082,7 +1282,6 @@
             
             const firstItem = historyList.firstElementChild;
             if (firstItem) {
-              firstItem.classList.remove('latest');
               firstItem.classList.add('removing');
             }
             
@@ -1127,7 +1326,18 @@
       });
 
       document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') hideModal();
+        if (e.key === 'Escape') {
+          hideModal();
+          // Also remove active class from history items
+          document.querySelectorAll('.history-item-wrapper').forEach(w => w.classList.remove('active'));
+        }
+      });
+
+      // Close active history items when clicking outside
+      document.addEventListener('click', (e) => {
+        if (!e.target.closest('.history-item-wrapper')) {
+          document.querySelectorAll('.history-item-wrapper').forEach(w => w.classList.remove('active'));
+        }
       });
 
       loadData();
