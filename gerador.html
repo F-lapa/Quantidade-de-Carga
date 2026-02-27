@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>APAC - Registro de Ocorrências</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #f8fafc;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(30, 41, 59, 0.6);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, transparent 100%);
+            padding: 35px 30px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .header h1 {
+            font-size: 1.6em;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            color: #94a3b8;
+            font-size: 0.9em;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            font-size: 0.8em;
+            color: #94a3b8;
+            margin-bottom: 8px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 14px 16px;
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            font-size: 0.95em;
+            color: #f8fafc;
+            font-family: inherit;
+            transition: all 0.3s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #f59e0b;
+            background: rgba(15, 23, 42, 0.7);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+            line-height: 1.5;
+        }
+
+        select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23f59e0b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 18px;
+            padding-right: 40px;
+        }
+
+        .search-box {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .search-box input {
+            padding-left: 45px;
+        }
+
+        .search-box::before {
+            content: "🔍";
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            opacity: 0.5;
+        }
+
+        .items-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+
+        .item-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: rgba(15, 23, 42, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .item-row:hover {
+            background: rgba(15, 23, 42, 0.6);
+            border-color: rgba(245, 158, 11, 0.3);
+        }
+
+        .item-row.selected {
+            background: rgba(245, 158, 11, 0.1);
+            border-color: #f59e0b;
+        }
+
+        .item-icon {
+            font-size: 1.4em;
+            opacity: 0.8;
+        }
+
+        .item-info {
+            flex: 1;
+        }
+
+        .item-name {
+            font-size: 0.9em;
+            font-weight: 500;
+            color: #f8fafc;
+        }
+
+        .item-meta {
+            font-size: 0.75em;
+            color: #64748b;
+            margin-top: 2px;
+        }
+
+        .qty-control {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .qty-btn {
+            width: 26px;
+            height: 26px;
+            border: none;
+            background: rgba(255, 255, 255, 0.1);
+            color: #f8fafc;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .qty-btn:hover:not(:disabled) {
+            background: #f59e0b;
+            color: #0f172a;
+        }
+
+        .qty-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .qty-value {
+            font-weight: 600;
+            color: #f59e0b;
+            min-width: 20px;
+            text-align: center;
+            font-size: 0.95em;
+        }
+
+        .generate-btn {
+            width: 100%;
+            padding: 16px;
+            background: #f59e0b;
+            color: #0f172a;
+            border: none;
+            border-radius: 12px;
+            font-size: 0.95em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+
+        .generate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(245, 158, 11, 0.3);
+        }
+
+        .result-box {
+            margin-top: 25px;
+            padding: 25px;
+            background: rgba(5, 150, 105, 0.1);
+            border: 1px solid rgba(5, 150, 105, 0.2);
+            border-radius: 16px;
+            display: none;
+        }
+
+        .result-box.show {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .result-title {
+            color: #10b981;
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+
+        .copy-btn {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85em;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .copy-btn:hover {
+            background: #059669;
+        }
+
+        .result-text {
+            background: rgba(15, 23, 42, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            font-size: 0.95em;
+            line-height: 1.6;
+            color: #e2e8f0;
+            white-space: pre-wrap;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 30px;
+            color: #64748b;
+            font-size: 0.9em;
+            display: none;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 600px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Registro de Ocorrências</h1>
+            <p>Descrição inteligente de cargas retidas</p>
+        </div>
+
+        <div class="content">
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>Data</label>
+                    <input type="date" id="date">
+                </div>
+                <div class="form-group">
+                    <label>Horário</label>
+                    <input type="time" id="time">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>APAC Responsável</label>
+                <select id="apac">
+                    <option value="">Selecionar...</option>
+                    <option value="Fernando Lapa">Fernando Lapa</option>
+                    <option value="Fabrício Aguiar">Fabrício Aguiar</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Materiais Identificados</label>
+                <div class="search-box">
+                    <input type="text" id="search" placeholder="Buscar carga..." oninput="filterItems()">
+                </div>
+                <div class="items-list" id="itemsList"></div>
+                <div class="no-results" id="noResults">Nenhum material encontrado</div>
+            </div>
+
+            <div class="form-group">
+                <label>Ocorrência</label>
+                <textarea id="notes" placeholder="Descreva o que aconteceu, ação tomada, informações da transportadora, AWB, origem, destino..."></textarea>
+            </div>
+
+            <button class="generate-btn" onclick="generate()">Gerar Descrição</button>
+
+            <div class="result-box" id="resultBox">
+                <div class="result-header">
+                    <span class="result-title">✓ Descrição Gerada</span>
+                    <button class="copy-btn" onclick="copyText()">Copiar</button>
+                </div>
+                <div class="result-text" id="resultText"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const items = [
+            { id: 1, name: 'Gasolina/Combustível', icon: '⛽', type: 'Líquido Inflamável' },
+            { id: 2, name: 'Gás GLP', icon: '🔥', type: 'Gás Comprimido' },
+            { id: 3, name: 'Oxigênio Comprimido', icon: '💨', type: 'Gás' },
+            { id: 4, name: 'Álcool/Solventes', icon: '🧪', type: 'Líquido Inflamável' },
+            { id: 5, name: 'Tintas/Vernizes', icon: '🎨', type: 'Líquido Inflamável' },
+            { id: 6, name: 'Baterias de Lítio', icon: '🔋', type: 'Bateria' },
+            { id: 7, name: 'Ácidos', icon: '⚗️', type: 'Corrosivo' },
+            { id: 8, name: 'Pesticidas', icon: '☠️', type: 'Tóxico' },
+            { id: 9, name: 'Explosivos', icon: '💣', type: 'Explosivo' },
+            { id: 10, name: 'Gelo Seco', icon: '❄️', type: 'Gás Sólido' },
+            { id: 11, name: 'Mercúrio', icon: '🌡️', type: 'Tóxico' },
+            { id: 12, name: 'Material Radioativo', icon: '☢️', type: 'Radioativo' },
+            { id: 13, name: 'Motores a Combustão', icon: '🔧', type: 'Peça Perigosa' },
+            { id: 14, name: 'Aerossóis', icon: '📦', type: 'Gás Pressurizado' },
+            { id: 15, name: 'Resinas/Poliéster', icon: '⚱️', type: 'Líquido Inflamável' }
+        ];
+
+        let selected = {};
+
+        function init() {
+            renderItems();
+            document.getElementById('date').valueAsDate = new Date();
+            document.getElementById('time').value = new Date().toTimeString().slice(0, 5);
+        }
+
+        function renderItems() {
+            const search = document.getElementById('search').value.toLowerCase();
+            const list = document.getElementById('itemsList');
+            const filtered = items.filter(i => i.name.toLowerCase().includes(search));
+            
+            document.getElementById('noResults').style.display = filtered.length ? 'none' : 'block';
+            
+            list.innerHTML = filtered.map(item => {
+                const qty = selected[item.id] || 0;
+                return `
+                    <div class="item-row ${qty > 0 ? 'selected' : ''}" onclick="toggle(${item.id})">
+                        <span class="item-icon">${item.icon}</span>
+                        <div class="item-info">
+                            <div class="item-name">${item.name}</div>
+                            <div class="item-meta">${item.type}</div>
+                        </div>
+                        <div class="qty-control" onclick="event.stopPropagation()">
+                            <button class="qty-btn" onclick="changeQty(${item.id}, -1)" ${qty <= 0 ? 'disabled' : ''}>−</button>
+                            <span class="qty-value">${qty}</span>
+                            <button class="qty-btn" onclick="changeQty(${item.id}, 1)">+</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function filterItems() {
+            renderItems();
+        }
+
+        function toggle(id) {
+            if (!selected[id]) changeQty(id, 1);
+        }
+
+        function changeQty(id, delta) {
+            selected[id] = (selected[id] || 0) + delta;
+            if (selected[id] <= 0) delete selected[id];
+            renderItems();
+        }
+
+        function generate() {
+            const date = document.getElementById('date').value;
+            const time = document.getElementById('time').value;
+            const apac = document.getElementById('apac').value;
+            const notes = document.getElementById('notes').value.trim();
+
+            if (!date || !time || !apac) {
+                alert('Preencha data, horário e APAC');
+                return;
+            }
+
+            if (Object.keys(selected).length === 0) {
+                alert('Selecione pelo menos um material');
+                return;
+            }
+
+            if (!notes) {
+                alert('Descreva a ocorrência');
+                return;
+            }
+
+            // Formatar data
+            const [ano, mes, dia] = date.split('-');
+            const dataFormatada = `${dia}/${mes}/${ano}`;
+
+            // Lista de itens formatada
+            const itensList = Object.entries(selected).map(([id, qty]) => {
+                const item = items.find(i => i.id == id);
+                return qty > 1 ? `${qty} ${item.name}` : item.name;
+            });
+
+            // Montar texto elegante e conciso
+            let texto = `Em ${dataFormatada} às ${time}h, `;
+            
+            // Verbos elegantes baseados no contexto
+            const notasLower = notes.toLowerCase();
+            let verbo = "foi identificada";
+            
+            if (notasLower.includes('notif')) verbo = "foi notificada";
+            else if (notasLower.includes('liber')) verbo = "foi liberada após";
+            else if (notasLower.includes('devol')) verbo = "foi devolvida";
+            else if (notasLower.includes('retid')) verbo = "foi retida";
+            else if (notasLower.includes('interd')) verbo = "foi interditada";
+            
+            // Construir descrição dos materiais
+            let descricaoItens = "";
+            if (itensList.length === 1) {
+                descricaoItens = `carga contendo ${itensList[0]}`;
+            } else if (itensList.length === 2) {
+                descricaoItens = `carga contendo ${itensList[0]} e ${itensList[1]}`;
+            } else {
+                const ultimo = itensList.pop();
+                descricaoItens = `carga contendo ${itensList.join(', ')} e ${ultimo}`;
+            }
+            
+            texto += `${descricaoItens} que ${verbo} pelo APAC ${apac}. `;
+            
+            // Adicionar observações com primeira letra maiúscula
+            const obsFormatada = notes.charAt(0).toUpperCase() + notes.slice(1);
+            
+            // Verificar se termina com ponto final
+            texto += obsFormatada.endsWith('.') ? obsFormatada : obsFormatada + '.';
+
+            document.getElementById('resultText').textContent = texto;
+            document.getElementById('resultBox').classList.add('show');
+        }
+
+        function copyText() {
+            navigator.clipboard.writeText(document.getElementById('resultText').textContent).then(() => {
+                const btn = document.querySelector('.copy-btn');
+                btn.textContent = 'Copiado!';
+                setTimeout(() => btn.textContent = 'Copiar', 2000);
+            });
+        }
+
+        init();
+    </script>
+</body>
+</html>
