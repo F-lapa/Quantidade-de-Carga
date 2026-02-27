@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>APAC - Registro de Ocorrências</title>
+    <title>APAC - Gerador de Ocorrências</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         
@@ -36,6 +36,33 @@
             padding: 35px 30px;
             text-align: center;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+        }
+
+        .back-btn {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #f8fafc;
+            padding: 10px 16px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-size: 0.85em;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+
+        .back-btn:hover {
+            background: rgba(245, 158, 11, 0.2);
+            border-color: #f59e0b;
+            color: #f59e0b;
+            transform: translateY(-50%) translateX(-3px);
         }
 
         .header h1 {
@@ -308,14 +335,34 @@
             .grid-2 {
                 grid-template-columns: 1fr;
             }
+            
+            .back-btn {
+                position: relative;
+                left: auto;
+                top: auto;
+                transform: none;
+                margin-bottom: 15px;
+                justify-content: center;
+            }
+            
+            .back-btn:hover {
+                transform: translateX(-3px);
+            }
+            
+            .header {
+                padding: 20px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>Registro de Ocorrências</h1>
-            <p>Descrição inteligente de cargas retidas</p>
+            <a href="index.html" class="back-btn">
+                <span>←</span> Voltar
+            </a>
+            <h1>Gerador de Ocorrências</h1>
+            <p>Registro de cargas retidas</p>
         </div>
 
         <div class="content">
@@ -350,7 +397,7 @@
 
             <div class="form-group">
                 <label>Ocorrência</label>
-                <textarea id="notes" placeholder="Descreva o que aconteceu, ação tomada, informações da transportadora, AWB, origem, destino..."></textarea>
+                <textarea id="notes" placeholder="Descreva o que aconteceu: transportadora, AWB, origem, destino, ação tomada..."></textarea>
             </div>
 
             <button class="generate-btn" onclick="generate()">Gerar Descrição</button>
@@ -453,47 +500,41 @@
                 return;
             }
 
-            // Formatar data
             const [ano, mes, dia] = date.split('-');
             const dataFormatada = `${dia}/${mes}/${ano}`;
 
-            // Lista de itens formatada
             const itensList = Object.entries(selected).map(([id, qty]) => {
                 const item = items.find(i => i.id == id);
                 return qty > 1 ? `${qty} ${item.name}` : item.name;
             });
 
-            // Montar texto elegante e conciso
-            let texto = `Em ${dataFormatada} às ${time}h, `;
-            
-            // Verbos elegantes baseados no contexto
-            const notasLower = notes.toLowerCase();
-            let verbo = "foi identificada";
-            
-            if (notasLower.includes('notif')) verbo = "foi notificada";
-            else if (notasLower.includes('liber')) verbo = "foi liberada após";
-            else if (notasLower.includes('devol')) verbo = "foi devolvida";
-            else if (notasLower.includes('retid')) verbo = "foi retida";
-            else if (notasLower.includes('interd')) verbo = "foi interditada";
-            
-            // Construir descrição dos materiais
-            let descricaoItens = "";
+            let descricaoItens = '';
             if (itensList.length === 1) {
-                descricaoItens = `carga contendo ${itensList[0]}`;
+                descricaoItens = itensList[0];
             } else if (itensList.length === 2) {
-                descricaoItens = `carga contendo ${itensList[0]} e ${itensList[1]}`;
+                descricaoItens = `${itensList[0]} e ${itensList[1]}`;
             } else {
                 const ultimo = itensList.pop();
-                descricaoItens = `carga contendo ${itensList.join(', ')} e ${ultimo}`;
+                descricaoItens = `${itensList.join(', ')} e ${ultimo}`;
             }
+
+            const notasLower = notes.toLowerCase();
             
-            texto += `${descricaoItens} que ${verbo} pelo APAC ${apac}. `;
-            
-            // Adicionar observações com primeira letra maiúscula
-            const obsFormatada = notes.charAt(0).toUpperCase() + notes.slice(1);
-            
-            // Verificar se termina com ponto final
-            texto += obsFormatada.endsWith('.') ? obsFormatada : obsFormatada + '.';
+            let verboAcao = 'retida';
+            if (notasLower.includes('notific')) verboAcao = 'notificada';
+            else if (notasLower.includes('liber')) verboAcao = 'liberada após análise';
+            else if (notasLower.includes('devolv')) verboAcao = 'devolvida à origem';
+            else if (notasLower.includes('descaracteriz')) verboAcao = 'descaracterizada';
+            else if (notasLower.includes('interdit')) verboAcao = 'interditada';
+
+            let contexto = '';
+            if (notasLower.includes('awb') || notasLower.includes('transportadora')) {
+                contexto = ' na carga aérea';
+            }
+
+            let texto = `No dia ${dataFormatada} às ${time}h, o APAC ${apac} registrou a apreensão de ${descricaoItens}${contexto}. A carga foi ${verboAcao}. ${notes}`;
+
+            if (!texto.endsWith('.')) texto += '.';
 
             document.getElementById('resultText').textContent = texto;
             document.getElementById('resultBox').classList.add('show');
