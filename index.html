@@ -1894,7 +1894,7 @@
         document.getElementById('edit-shift2').value = '';
       };
 
-      // Gerar PDF COM LOGO DO ARQUIVO LOCAL
+      // Gerar PDF COM LOGO CENTRALIZADO E MAIOR
       document.getElementById('btn-generate-pdf').onclick = async () => {
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF();
@@ -1905,11 +1905,11 @@
         doc.setFillColor(255, 255, 255);
         doc.rect(0, 0, 210, 297, 'F');
         
-        // Cabeçalho vermelho LATAM
+        // Cabeçalho vermelho LATAM (altura aumentada para 40mm para acomodar logo maior)
         doc.setFillColor(red[0], red[1], red[2]);
-        doc.rect(0, 0, 210, 35, 'F');
+        doc.rect(0, 0, 210, 40, 'F');
         
-        // TENTAR ADICIONAR LOGO DO ARQUIVO LOCAL
+        // TENTAR ADICIONAR LOGO DO ARQUIVO LOCAL - CENTRALIZADO E MAIOR
         try {
           // Tentar carregar logo.png do mesmo diretório
           const logoUrl = 'logo.png';
@@ -1930,28 +1930,33 @@
           ctx.drawImage(img, 0, 0);
           const imgData = canvas.toDataURL('image/png');
           
-          // Calcular proporção para caber no espaço (altura máxima 25px)
-          const imgHeight = 25;
+          // AUMENTADO: Altura máxima de 30px (antes era 25px)
+          const imgHeight = 30;
           const imgWidth = (img.width * imgHeight) / img.height;
           
-          doc.addImage(imgData, 'PNG', 20, 5, imgWidth, imgHeight);
+          // CENTRALIZADO: Calcular posição X para centralizar na página (largura A4 = 210mm)
+          const pageWidth = 210;
+          const xPosition = (pageWidth - imgWidth) / 2; // Centraliza horizontalmente
+          const yPosition = 5; // Posição Y no cabeçalho
+          
+          doc.addImage(imgData, 'PNG', xPosition, yPosition, imgWidth, imgHeight);
           
         } catch (error) {
-          // Fallback: texto estilizado se logo não encontrado
+          // Fallback: texto estilizado centralizado se logo não encontrado
           console.log('Logo não encontrado, usando texto:', error);
           doc.setTextColor(255, 255, 255);
-          doc.setFontSize(24);
+          doc.setFontSize(28); // Aumentado de 24 para 28
           doc.setFont('helvetica', 'bold');
-          doc.text('LATAM', 20, 22);
+          doc.text('LATAM', 105, 22, { align: 'center' }); // Centralizado no meio da página (x=105)
           
-          doc.setFontSize(12);
+          doc.setFontSize(14); // Aumentado de 12 para 14
           doc.setFont('helvetica', 'normal');
-          doc.text('AIRLINES', 20, 28);
+          doc.text('AIRLINES', 105, 30, { align: 'center' }); // Centralizado
         }
         
-        // Linha azul decorativa
+        // Linha azul decorativa (ajustada para nova altura do cabeçalho)
         doc.setFillColor(blue[0], blue[1], blue[2]);
-        doc.rect(0, 35, 210, 2, 'F');
+        doc.rect(0, 40, 210, 2, 'F');
         
         const months = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
         const mIdx = parseInt(selectedMonthKey.split('-')[1]) - 1;
@@ -1959,22 +1964,22 @@
         
         doc.setTextColor(50, 50, 50);
         doc.setFontSize(11);
-        doc.text(`${months[mIdx]} ${year}`, 20, 48);
+        doc.text(`${months[mIdx]} ${year}`, 20, 52); // Ajustado Y de 48 para 52
         
         const data = yearData[selectedMonthKey] || [];
         const total = data.reduce((s, d) => s + d.total, 0);
         const days = data.length;
         
         doc.setFillColor(240, 240, 240);
-        doc.rect(20, 55, 170, 20, 'F');
+        doc.rect(20, 58, 170, 20, 'F'); // Ajustado Y de 55 para 58
         doc.setFontSize(12);
         doc.setTextColor(blue[0], blue[1], blue[2]);
-        doc.text(`Total: ${total.toLocaleString('pt-BR')} | Dias: ${days}`, 105, 68, { align: 'center' });
+        doc.text(`Total: ${total.toLocaleString('pt-BR')} | Dias: ${days}`, 105, 71, { align: 'center' }); // Ajustado Y de 68 para 71
         
         const tableData = data.map(d => [d.date, d.shift1 || '-', d.shift2 || '-', d.total]);
         
         doc.autoTable({
-          startY: 85,
+          startY: 88, // Ajustado de 85 para 88
           head: [['Data', 'Turno 1', 'Turno 2', 'Total']],
           body: tableData,
           theme: 'grid',
