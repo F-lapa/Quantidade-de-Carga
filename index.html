@@ -1458,6 +1458,23 @@
         loadingOverlay.classList.toggle('show', show);
       }
 
+      // CORREÇÃO: Função para formatar data corretamente sem problemas de timezone
+      function formatDateToBR(dateString) {
+        // Extrair componentes diretamente da string YYYY-MM-DD
+        const [year, month, day] = dateString.split('-');
+        // Retornar no formato DD/MM/YYYY sem conversão de timezone
+        return `${day}/${month}/${year}`;
+      }
+
+      // CORREÇÃO: Função para obter data atual no formato YYYY-MM-DD sem timezone
+      function getTodayString() {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+      }
+
       // Carregar dados do Firestore com listener em tempo real
       async function loadData() {
         updateConnectionStatus('syncing');
@@ -1637,7 +1654,8 @@
           `Confirmar fechamento com ${totalInspected.toLocaleString('pt-BR')} cargas?`, 
           async () => {
             const today = new Date();
-            const dateStr = today.toLocaleDateString('pt-BR');
+            // CORREÇÃO: Usar função segura para evitar problemas de timezone
+            const dateStr = formatDateToBR(getTodayString());
             const monthKey = `${currentYear}-${String(today.getMonth() + 1).padStart(2, '0')}`;
             
             if (!yearData[monthKey]) yearData[monthKey] = [];
@@ -1651,7 +1669,11 @@
             else entry.shift2 = totalInspected;
             entry.total = entry.shift1 + entry.shift2;
             
-            yearData[monthKey].sort((a, b) => new Date(b.date.split('/').reverse().join('-')) - new Date(a.date.split('/').reverse().join('-')));
+            yearData[monthKey].sort((a, b) => {
+              const dateA = new Date(a.date.split('/').reverse().join('-'));
+              const dateB = new Date(b.date.split('/').reverse().join('-'));
+              return dateB - dateA;
+            });
             
             totalInspected = 0;
             history = [];
@@ -1822,17 +1844,18 @@
       };
       document.getElementById('btn-close-report').onclick = () => reportModal.classList.remove('show');
 
-      // Editor de Dia
+      // Editor de Dia - CORREÇÃO DO BUG DE DATA
       document.getElementById('btn-save-day').onclick = async () => {
-        const date = document.getElementById('edit-date').value;
+        const dateInput = document.getElementById('edit-date').value;
         const s1 = parseInt(document.getElementById('edit-shift1').value) || 0;
         const s2 = parseInt(document.getElementById('edit-shift2').value) || 0;
         
-        if (!date) return showToast('error', 'Selecione uma data!');
+        if (!dateInput) return showToast('error', 'Selecione uma data!');
         
-        const d = new Date(date);
-        const dateStr = d.toLocaleDateString('pt-BR');
-        const monthKey = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+        // CORREÇÃO: Usar função segura para formatar data sem problemas de timezone
+        const dateStr = formatDateToBR(dateInput);
+        const [year, month] = dateInput.split('-');
+        const monthKey = `${year}-${month}`;
         
         if (!yearData[monthKey]) yearData[monthKey] = [];
         let entry = yearData[monthKey].find(e => e.date === dateStr);
@@ -1843,7 +1866,11 @@
         entry.shift1 = s1;
         entry.shift2 = s2;
         entry.total = s1 + s2;
-        yearData[monthKey].sort((a, b) => new Date(b.date.split('/').reverse().join('-')) - new Date(a.date.split('/').reverse().join('-')));
+        yearData[monthKey].sort((a, b) => {
+          const dateA = new Date(a.date.split('/').reverse().join('-'));
+          const dateB = new Date(b.date.split('/').reverse().join('-'));
+          return dateB - dateA;
+        });
         
         await saveToFirebase();
         if (monthKey === selectedMonthKey) updateReportTable();
@@ -1857,8 +1884,8 @@
         document.getElementById('edit-shift2').value = '';
       };
 
-      // Gerar PDF
-      document.getElementById('btn-generate-pdf').onclick = () => {
+      // Gerar PDF - CORREÇÃO DO LOGO
+      document.getElementById('btn-generate-pdf').onclick = async () => {
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF();
         
@@ -1868,19 +1895,22 @@
         doc.setFillColor(255, 255, 255);
         doc.rect(0, 0, 210, 297, 'F');
         
+        // Cabeçalho vermelho LATAM
         doc.setFillColor(red[0], red[1], red[2]);
         doc.rect(0, 0, 210, 35, 'F');
         
-        doc.setDrawColor(255, 255, 255);
-        doc.rect(150, 8, 50, 18);
+        // CORREÇÃO: Adicionar logo da LATAM como texto estilizado (fallback seguro)
+        // Se você tiver uma imagem base64, substitua esta seção
         doc.setTextColor(255, 255, 255);
-        doc.setFontSize(10);
-        doc.text('LOGO LATAM', 175, 19, { align: 'center' });
-        
-        doc.setFontSize(20);
+        doc.setFontSize(24);
         doc.setFont('helvetica', 'bold');
-        doc.text('RELATÓRIO MENSAL', 20, 22);
+        doc.text('LATAM', 20, 22);
         
+        doc.setFontSize(12);
+        doc.setFont('helvetica', 'normal');
+        doc.text('AIRLINES', 20, 28);
+        
+        // Linha azul decorativa
         doc.setFillColor(blue[0], blue[1], blue[2]);
         doc.rect(0, 35, 210, 2, 'F');
         
@@ -1935,7 +1965,7 @@
       });
 
       // Inicializar
-      document.getElementById('edit-date').valueAsDate = new Date();
+      document.getElementById('edit-date').value = getTodayString(); // CORREÇÃO: Usar função segura
       initMonthSelector();
       await loadData();
       quantityInput.focus();
