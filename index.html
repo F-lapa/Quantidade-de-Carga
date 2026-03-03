@@ -675,7 +675,7 @@
       opacity: 0.6;
     }
 
-    /* Modals */
+    /* Modals - CORREÇÃO Z-INDEX */
     .modal-overlay {
       position: fixed;
       inset: 0;
@@ -693,6 +693,16 @@
     .modal-overlay.show {
       display: flex;
       opacity: 1;
+    }
+
+    /* Modal de relatório (menor z-index) */
+    #report-modal-overlay {
+      z-index: 1000;
+    }
+
+    /* Modal de confirmação (maior z-index para aparecer por cima) */
+    #modal-overlay {
+      z-index: 2000;
     }
 
     .modal-large {
@@ -1250,7 +1260,7 @@
     </footer>
   </div>
 
-  <!-- Modal de Confirmação -->
+  <!-- Modal de Confirmação (z-index maior) -->
   <div class="modal-overlay" id="modal-overlay">
     <div class="modal">
       <div class="modal-icon" id="modal-icon"><i class="fas fa-exclamation-triangle"></i></div>
@@ -1263,7 +1273,7 @@
     </div>
   </div>
 
-  <!-- Modal de Relatório Mensal -->
+  <!-- Modal de Relatório Mensal (z-index menor) -->
   <div class="modal-overlay" id="report-modal-overlay">
     <div class="modal-large">
       <div class="modal-header">
@@ -1884,7 +1894,7 @@
         document.getElementById('edit-shift2').value = '';
       };
 
-      // Gerar PDF - CORREÇÃO DO LOGO
+      // Gerar PDF COM LOGO DO ARQUIVO LOCAL
       document.getElementById('btn-generate-pdf').onclick = async () => {
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF();
@@ -1899,16 +1909,45 @@
         doc.setFillColor(red[0], red[1], red[2]);
         doc.rect(0, 0, 210, 35, 'F');
         
-        // CORREÇÃO: Adicionar logo da LATAM como texto estilizado (fallback seguro)
-        // Se você tiver uma imagem base64, substitua esta seção
-        doc.setTextColor(255, 255, 255);
-        doc.setFontSize(24);
-        doc.setFont('helvetica', 'bold');
-        doc.text('LATAM', 20, 22);
-        
-        doc.setFontSize(12);
-        doc.setFont('helvetica', 'normal');
-        doc.text('AIRLINES', 20, 28);
+        // TENTAR ADICIONAR LOGO DO ARQUIVO LOCAL
+        try {
+          // Tentar carregar logo.png do mesmo diretório
+          const logoUrl = 'logo.png';
+          const img = new Image();
+          img.crossOrigin = "Anonymous";
+          
+          await new Promise((resolve, reject) => {
+            img.onload = resolve;
+            img.onerror = reject;
+            img.src = logoUrl;
+          });
+          
+          // Converter para base64 e adicionar ao PDF
+          const canvas = document.createElement('canvas');
+          canvas.width = img.width;
+          canvas.height = img.height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0);
+          const imgData = canvas.toDataURL('image/png');
+          
+          // Calcular proporção para caber no espaço (altura máxima 25px)
+          const imgHeight = 25;
+          const imgWidth = (img.width * imgHeight) / img.height;
+          
+          doc.addImage(imgData, 'PNG', 20, 5, imgWidth, imgHeight);
+          
+        } catch (error) {
+          // Fallback: texto estilizado se logo não encontrado
+          console.log('Logo não encontrado, usando texto:', error);
+          doc.setTextColor(255, 255, 255);
+          doc.setFontSize(24);
+          doc.setFont('helvetica', 'bold');
+          doc.text('LATAM', 20, 22);
+          
+          doc.setFontSize(12);
+          doc.setFont('helvetica', 'normal');
+          doc.text('AIRLINES', 20, 28);
+        }
         
         // Linha azul decorativa
         doc.setFillColor(blue[0], blue[1], blue[2]);
