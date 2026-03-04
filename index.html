@@ -252,6 +252,7 @@
       margin-bottom: 1rem;
       width: 100%;
       align-items: center;
+      margin-top: 2.5rem; /* ADICIONADO: Espaço para não ficar embaixo do "Online" */
     }
 
     .quick-actions-row {
@@ -1218,6 +1219,8 @@
       cursor: pointer;
     }
 
+    /* REMOVIDO: Estilos do botão de logout não são mais necessários */
+    /*
     .logout-btn {
       position: fixed;
       top: 1rem;
@@ -1240,6 +1243,7 @@
       background: rgba(255, 0, 110, 0.2);
       transform: scale(1.05);
     }
+    */
 
     .toast {
       position: fixed;
@@ -1382,10 +1386,10 @@
     </div>
   </div>
 
-  <!-- Logout Button (só aparece quando logado) -->
-  <button class="logout-btn app-hidden" id="logout-btn">
+  <!-- REMOVIDO: Botão de logout removido conforme solicitado -->
+  <!-- <button class="logout-btn app-hidden" id="logout-btn">
     <i class="fas fa-sign-out-alt"></i> Sair
-  </button>
+  </button> -->
 
   <!-- Connection Status -->
   <div class="connection-status offline app-hidden" id="connection-status">
@@ -1660,7 +1664,8 @@
       document.getElementById('login-modal-overlay').classList.remove('show');
       document.getElementById('main-app').classList.remove('app-hidden');
       document.getElementById('connection-status').classList.remove('app-hidden');
-      document.getElementById('logout-btn').classList.remove('app-hidden');
+      // REMOVIDO: Não mostrar mais o botão de logout
+      // document.getElementById('logout-btn').classList.remove('app-hidden');
       document.getElementById('loading-overlay').classList.remove('app-hidden');
     }
 
@@ -1668,7 +1673,8 @@
       document.getElementById('login-modal-overlay').classList.add('show');
       document.getElementById('main-app').classList.add('app-hidden');
       document.getElementById('connection-status').classList.add('app-hidden');
-      document.getElementById('logout-btn').classList.add('app-hidden');
+      // REMOVIDO: Não mostrar mais o botão de logout
+      // document.getElementById('logout-btn').classList.add('app-hidden');
       document.getElementById('loading-overlay').classList.add('app-hidden');
     }
 
@@ -1691,6 +1697,8 @@
       }
     }
 
+    // REMOVIDO: Função de logout não é mais necessária
+    /*
     function logout() {
       localStorage.removeItem(REMEMBER_KEY);
       sessionStorage.removeItem(STORAGE_KEY);
@@ -1700,6 +1708,7 @@
       document.getElementById('remember-device').checked = true;
       showToast('success', 'Logout realizado', 'Até logo!');
     }
+    */
 
     // Event Listeners de Login
     document.getElementById('login-form').addEventListener('submit', (e) => {
@@ -1711,9 +1720,12 @@
       login(username, password, remember);
     });
 
+    // REMOVIDO: Event listener do botão de logout
+    /*
     document.getElementById('logout-btn').addEventListener('click', () => {
       showModal('warning', 'Confirmar Saída', 'Deseja realmente sair do sistema?', logout);
     });
+    */
 
     // Verificar sessão existente ao carregar
     if (checkExistingSession()) {
