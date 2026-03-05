@@ -252,7 +252,7 @@
       margin-bottom: 1rem;
       width: 100%;
       align-items: center;
-      margin-top: 2.5rem; /* ADICIONADO: Espaço para não ficar embaixo do "Online" */
+      margin-top: 2.5rem;
     }
 
     .quick-actions-row {
@@ -676,7 +676,7 @@
       opacity: 0.6;
     }
 
-    /* Modals - CORREÇÃO Z-INDEX */
+    /* Modals */
     .modal-overlay {
       position: fixed;
       inset: 0;
@@ -696,17 +696,14 @@
       opacity: 1;
     }
 
-    /* Modal de relatório (menor z-index) */
     #report-modal-overlay {
       z-index: 1000;
     }
 
-    /* Modal de confirmação (maior z-index para aparecer por cima) */
     #modal-overlay {
       z-index: 2000;
     }
 
-    /* Login Modal - z-index mais alto */
     #login-modal-overlay {
       z-index: 3000;
     }
@@ -831,6 +828,12 @@
       border-color: var(--primary);
     }
 
+    .editor-input:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      background: rgba(255, 0, 0, 0.05);
+    }
+
     .btn-add-day {
       padding: 0.7rem 1.2rem;
       background: var(--success);
@@ -848,40 +851,141 @@
       text-transform: uppercase;
     }
 
-    .month-selector {
-      margin-bottom: 1.5rem;
+    .btn-add-day:disabled {
+      background: var(--text-secondary);
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+
+    .date-warning {
+      color: var(--danger);
+      font-size: 0.75rem;
+      margin-top: 0.5rem;
+      display: none;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .date-warning.show {
       display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
     }
 
-    @media (min-width: 500px) {
-      .month-selector {
-        flex-direction: row;
-        align-items: center;
-      }
+    /* NOVO: Seletor de Mês Organizado */
+    .month-selector-container {
+      margin-bottom: 1.5rem;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+      padding: 1rem;
     }
 
-    .month-selector label {
+    .month-selector-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.8rem;
+    }
+
+    .month-selector-title {
+      font-size: 0.8rem;
       font-weight: 600;
       color: var(--text-secondary);
       text-transform: uppercase;
       letter-spacing: 1px;
-      font-size: 0.8rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
     }
 
-    .month-select {
-      padding: 0.7rem;
-      background: rgba(255, 255, 255, 0.05);
-      border: 2px solid var(--glass-border);
+    .year-navigation {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn-year-nav {
+      width: 32px;
+      height: 32px;
       border-radius: 8px;
-      color: var(--text-primary);
+      background: rgba(0, 240, 255, 0.1);
+      border: 1px solid rgba(0, 240, 255, 0.3);
+      color: var(--primary);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+    }
+
+    .btn-year-nav:hover {
+      background: rgba(0, 240, 255, 0.2);
+      transform: scale(1.1);
+    }
+
+    .current-year-display {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--primary);
+      min-width: 60px;
+      text-align: center;
+    }
+
+    .months-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.5rem;
+    }
+
+    @media (min-width: 500px) {
+      .months-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+
+    .month-btn {
+      padding: 0.6rem 0.4rem;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--glass-border);
+      color: var(--text-secondary);
       font-family: 'Outfit', sans-serif;
-      font-size: 0.9rem;
+      font-size: 0.75rem;
       font-weight: 600;
       cursor: pointer;
-      outline: none;
-      width: 100%;
+      transition: all 0.3s ease;
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+    .month-btn:hover {
+      background: rgba(0, 240, 255, 0.1);
+      border-color: rgba(0, 240, 255, 0.3);
+      color: var(--primary);
+      transform: translateY(-2px);
+    }
+
+    .month-btn.active {
+      background: var(--gradient-1);
+      border-color: var(--primary);
+      color: white;
+      box-shadow: 0 4px 15px rgba(0, 240, 255, 0.3);
+    }
+
+    .month-btn.has-data {
+      position: relative;
+    }
+
+    .month-btn.has-data::after {
+      content: '';
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      width: 6px;
+      height: 6px;
+      background: var(--success);
+      border-radius: 50%;
+      box-shadow: 0 0 5px var(--success);
     }
 
     .month-summary {
@@ -1219,32 +1323,6 @@
       cursor: pointer;
     }
 
-    /* REMOVIDO: Estilos do botão de logout não são mais necessários */
-    /*
-    .logout-btn {
-      position: fixed;
-      top: 1rem;
-      left: 1rem;
-      background: rgba(255, 0, 110, 0.1);
-      border: 1px solid rgba(255, 0, 110, 0.3);
-      color: var(--danger);
-      padding: 0.5rem 1rem;
-      border-radius: 20px;
-      font-size: 0.75rem;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      z-index: 50;
-    }
-
-    .logout-btn:hover {
-      background: rgba(255, 0, 110, 0.2);
-      transform: scale(1.05);
-    }
-    */
-
     .toast {
       position: fixed;
       bottom: 1rem;
@@ -1351,7 +1429,7 @@
   <div class="bg-glow bg-glow-1"></div>
   <div class="bg-glow bg-glow-2"></div>
 
-  <!-- Login Modal (z-index mais alto - aparece primeiro) -->
+  <!-- Login Modal -->
   <div class="modal-overlay show" id="login-modal-overlay">
     <div class="login-modal">
       <div class="login-icon">
@@ -1385,11 +1463,6 @@
       </form>
     </div>
   </div>
-
-  <!-- REMOVIDO: Botão de logout removido conforme solicitado -->
-  <!-- <button class="logout-btn app-hidden" id="logout-btn">
-    <i class="fas fa-sign-out-alt"></i> Sair
-  </button> -->
 
   <!-- Connection Status -->
   <div class="connection-status offline app-hidden" id="connection-status">
@@ -1485,7 +1558,7 @@
     </footer>
   </div>
 
-  <!-- Modal de Confirmação (z-index maior) -->
+  <!-- Modal de Confirmação -->
   <div class="modal-overlay" id="modal-overlay">
     <div class="modal">
       <div class="modal-icon" id="modal-icon"><i class="fas fa-exclamation-triangle"></i></div>
@@ -1498,7 +1571,7 @@
     </div>
   </div>
 
-  <!-- Modal de Relatório Mensal (z-index menor) -->
+  <!-- Modal de Relatório Mensal -->
   <div class="modal-overlay" id="report-modal-overlay">
     <div class="modal-large">
       <div class="modal-header">
@@ -1514,6 +1587,9 @@
             <div class="editor-field">
               <label>Data</label>
               <input type="date" class="editor-input" id="edit-date">
+              <div class="date-warning" id="date-warning">
+                <i class="fas fa-exclamation-triangle"></i> Não é permitido adicionar datas futuras
+              </div>
             </div>
             <div class="editor-field">
               <label>Turno 1</label>
@@ -1529,10 +1605,25 @@
           </button>
         </div>
 
-        <!-- Seletor de Mês -->
-        <div class="month-selector">
-          <label for="month-select">Mês:</label>
-          <select class="month-select" id="month-select"></select>
+        <!-- NOVO: Seletor de Mês Organizado -->
+        <div class="month-selector-container">
+          <div class="month-selector-header">
+            <div class="month-selector-title">
+              <i class="fas fa-calendar"></i> Selecionar Período
+            </div>
+            <div class="year-navigation">
+              <button class="btn-year-nav" id="btn-prev-year" title="Ano Anterior">
+                <i class="fas fa-chevron-left"></i>
+              </button>
+              <span class="current-year-display" id="current-year-display">2024</span>
+              <button class="btn-year-nav" id="btn-next-year" title="Próximo Ano">
+                <i class="fas fa-chevron-right"></i>
+              </button>
+            </div>
+          </div>
+          <div class="months-grid" id="months-grid">
+            <!-- Meses serão gerados via JavaScript -->
+          </div>
         </div>
 
         <!-- Resumo -->
@@ -1664,8 +1755,6 @@
       document.getElementById('login-modal-overlay').classList.remove('show');
       document.getElementById('main-app').classList.remove('app-hidden');
       document.getElementById('connection-status').classList.remove('app-hidden');
-      // REMOVIDO: Não mostrar mais o botão de logout
-      // document.getElementById('logout-btn').classList.remove('app-hidden');
       document.getElementById('loading-overlay').classList.remove('app-hidden');
     }
 
@@ -1673,8 +1762,6 @@
       document.getElementById('login-modal-overlay').classList.add('show');
       document.getElementById('main-app').classList.add('app-hidden');
       document.getElementById('connection-status').classList.add('app-hidden');
-      // REMOVIDO: Não mostrar mais o botão de logout
-      // document.getElementById('logout-btn').classList.add('app-hidden');
       document.getElementById('loading-overlay').classList.add('app-hidden');
     }
 
@@ -1697,19 +1784,6 @@
       }
     }
 
-    // REMOVIDO: Função de logout não é mais necessária
-    /*
-    function logout() {
-      localStorage.removeItem(REMEMBER_KEY);
-      sessionStorage.removeItem(STORAGE_KEY);
-      showLoginModal();
-      document.getElementById('login-username').value = '';
-      document.getElementById('login-password').value = '';
-      document.getElementById('remember-device').checked = true;
-      showToast('success', 'Logout realizado', 'Até logo!');
-    }
-    */
-
     // Event Listeners de Login
     document.getElementById('login-form').addEventListener('submit', (e) => {
       e.preventDefault();
@@ -1719,13 +1793,6 @@
       
       login(username, password, remember);
     });
-
-    // REMOVIDO: Event listener do botão de logout
-    /*
-    document.getElementById('logout-btn').addEventListener('click', () => {
-      showModal('warning', 'Confirmar Saída', 'Deseja realmente sair do sistema?', logout);
-    });
-    */
 
     // Verificar sessão existente ao carregar
     if (checkExistingSession()) {
@@ -1752,6 +1819,10 @@
       let currentYear = new Date().getFullYear();
       let isOnline = false;
       let unsubscribe = null;
+
+      // Variáveis do seletor de mês
+      let selectorCurrentYear = new Date().getFullYear();
+      let selectedMonthKey = '';
 
       // Aguardar Firebase estar pronto
       while (!window.firebaseDB) {
@@ -1785,21 +1856,31 @@
         loadingOverlay.classList.toggle('show', show);
       }
 
-      // CORREÇÃO: Função para formatar data corretamente sem problemas de timezone
+      // Função para formatar data corretamente sem problemas de timezone
       function formatDateToBR(dateString) {
-        // Extrair componentes diretamente da string YYYY-MM-DD
         const [year, month, day] = dateString.split('-');
-        // Retornar no formato DD/MM/YYYY sem conversão de timezone
         return `${day}/${month}/${year}`;
       }
 
-      // CORREÇÃO: Função para obter data atual no formato YYYY-MM-DD sem timezone
+      // Função para obter data atual no formato YYYY-MM-DD sem timezone
       function getTodayString() {
         const now = new Date();
         const year = now.getFullYear();
         const month = String(now.getMonth() + 1).padStart(2, '0');
         const day = String(now.getDate()).padStart(2, '0');
         return `${year}-${month}-${day}`;
+      }
+
+      // NOVA FUNÇÃO: Verificar se a data é futura
+      function isFutureDate(dateString) {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        
+        const [year, month, day] = dateString.split('-');
+        const checkDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+        checkDate.setHours(0, 0, 0, 0);
+        
+        return checkDate > today;
       }
 
       // Carregar dados do Firestore com listener em tempo real
@@ -1838,7 +1919,7 @@
             showLoading(false);
           });
 
-          // Carregar dados anuais
+          // Carregar dados anuais - MANTÉM TODOS OS ANOS
           const yearSnap = await getDoc(yearDataRef);
           if (yearSnap.exists()) {
             yearData = yearSnap.data() || {};
@@ -1864,7 +1945,11 @@
         
         try {
           await setDoc(currentShiftRef, initialData);
-          await setDoc(yearDataRef, {});
+          // Não sobrescreve yearData para manter histórico de anos anteriores
+          const existingData = await getDoc(yearDataRef);
+          if (!existingData.exists()) {
+            await setDoc(yearDataRef, {});
+          }
         } catch (error) {
           console.error('Erro ao inicializar:', error);
         }
@@ -1905,8 +1990,8 @@
             updatedAt: serverTimestamp()
           });
           
-          // Salvar dados anuais
-          await setDoc(yearDataRef, yearData);
+          // Salvar dados anuais - preserva todos os anos existentes
+          await setDoc(yearDataRef, yearData, { merge: true });
           
           updateConnectionStatus('online');
         } catch (error) {
@@ -1981,7 +2066,6 @@
           `Confirmar fechamento com ${totalInspected.toLocaleString('pt-BR')} cargas?`, 
           async () => {
             const today = new Date();
-            // CORREÇÃO: Usar função segura para evitar problemas de timezone
             const dateStr = formatDateToBR(getTodayString());
             const monthKey = `${currentYear}-${String(today.getMonth() + 1).padStart(2, '0')}`;
             
@@ -2102,24 +2186,63 @@
 
       // Relatório Mensal
       const reportModal = document.getElementById('report-modal-overlay');
-      const monthSelect = document.getElementById('month-select');
-      let selectedMonthKey = '';
+      const monthsGrid = document.getElementById('months-grid');
+      const currentYearDisplay = document.getElementById('current-year-display');
+      const btnPrevYear = document.getElementById('btn-prev-year');
+      const btnNextYear = document.getElementById('btn-next-year');
 
-      const initMonthSelector = () => {
-        const months = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
-        monthSelect.innerHTML = '';
-        months.forEach((m, i) => {
-          const opt = document.createElement('option');
-          opt.value = `${currentYear}-${String(i + 1).padStart(2, '0')}`;
-          opt.textContent = `${m} ${currentYear}`;
-          monthSelect.appendChild(opt);
+      // NOVO: Gerar grid de meses
+      const generateMonthsGrid = () => {
+        const months = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+        monthsGrid.innerHTML = '';
+        
+        months.forEach((monthName, index) => {
+          const monthValue = `${selectorCurrentYear}-${String(index + 1).padStart(2, '0')}`;
+          const btn = document.createElement('button');
+          btn.className = 'month-btn';
+          btn.textContent = monthName;
+          btn.dataset.month = monthValue;
+          
+          // Verificar se tem dados
+          if (yearData[monthValue] && yearData[monthValue].length > 0) {
+            btn.classList.add('has-data');
+          }
+          
+          // Marcar como ativo se for o selecionado
+          if (monthValue === selectedMonthKey) {
+            btn.classList.add('active');
+          }
+          
+          btn.onclick = () => {
+            selectedMonthKey = monthValue;
+            updateMonthsGridSelection();
+            updateReportTable();
+          };
+          
+          monthsGrid.appendChild(btn);
         });
-        selectedMonthKey = `${currentYear}-${String(new Date().getMonth() + 1).padStart(2, '0')}`;
-        monthSelect.value = selectedMonthKey;
-        monthSelect.onchange = () => {
-          selectedMonthKey = monthSelect.value;
-          updateReportTable();
-        };
+        
+        currentYearDisplay.textContent = selectorCurrentYear;
+      };
+
+      const updateMonthsGridSelection = () => {
+        document.querySelectorAll('.month-btn').forEach(btn => {
+          btn.classList.remove('active');
+          if (btn.dataset.month === selectedMonthKey) {
+            btn.classList.add('active');
+          }
+        });
+      };
+
+      // Navegação de ano
+      btnPrevYear.onclick = () => {
+        selectorCurrentYear--;
+        generateMonthsGrid();
+      };
+
+      btnNextYear.onclick = () => {
+        selectorCurrentYear++;
+        generateMonthsGrid();
       };
 
       const updateReportTable = () => {
@@ -2159,6 +2282,7 @@
           if (yearData[selectedMonthKey]) {
             yearData[selectedMonthKey] = yearData[selectedMonthKey].filter(d => d.date !== date);
             await saveToFirebase();
+            generateMonthsGrid(); // Atualizar indicadores
             updateReportTable();
             showToast('success', 'Dia removido');
           }
@@ -2166,20 +2290,67 @@
       };
 
       document.getElementById('btn-month-report').onclick = () => {
+        // Inicializar com ano atual
+        selectorCurrentYear = new Date().getFullYear();
+        const currentMonth = new Date().getMonth() + 1;
+        selectedMonthKey = `${selectorCurrentYear}-${String(currentMonth).padStart(2, '0')}`;
+        generateMonthsGrid();
         updateReportTable();
         reportModal.classList.add('show');
       };
+      
       document.getElementById('btn-close-report').onclick = () => reportModal.classList.remove('show');
 
-      // Editor de Dia - CORREÇÃO DO BUG DE DATA
+      // Editor de Dia - COM VALIDAÇÃO DE DATA FUTURA
+      const editDateInput = document.getElementById('edit-date');
+      const dateWarning = document.getElementById('date-warning');
+      const btnSaveDay = document.getElementById('btn-save-day');
+      const editShift1 = document.getElementById('edit-shift1');
+      const editShift2 = document.getElementById('edit-shift2');
+
+      // Validar data ao alterar
+      editDateInput.addEventListener('change', () => {
+        validateDateInput();
+      });
+
+      function validateDateInput() {
+        const dateValue = editDateInput.value;
+        if (!dateValue) {
+          dateWarning.classList.remove('show');
+          btnSaveDay.disabled = false;
+          editShift1.disabled = false;
+          editShift2.disabled = false;
+          return true;
+        }
+
+        if (isFutureDate(dateValue)) {
+          dateWarning.classList.add('show');
+          btnSaveDay.disabled = true;
+          editShift1.disabled = true;
+          editShift2.disabled = true;
+          return false;
+        } else {
+          dateWarning.classList.remove('show');
+          btnSaveDay.disabled = false;
+          editShift1.disabled = false;
+          editShift2.disabled = false;
+          return true;
+        }
+      }
+
       document.getElementById('btn-save-day').onclick = async () => {
-        const dateInput = document.getElementById('edit-date').value;
-        const s1 = parseInt(document.getElementById('edit-shift1').value) || 0;
-        const s2 = parseInt(document.getElementById('edit-shift2').value) || 0;
+        const dateInput = editDateInput.value;
+        const s1 = parseInt(editShift1.value) || 0;
+        const s2 = parseInt(editShift2.value) || 0;
         
         if (!dateInput) return showToast('error', 'Selecione uma data!');
         
-        // CORREÇÃO: Usar função segura para formatar data sem problemas de timezone
+        // VALIDAÇÃO: Impedir datas futuras
+        if (isFutureDate(dateInput)) {
+          showToast('error', 'Não é permitido adicionar datas futuras!');
+          return;
+        }
+        
         const dateStr = formatDateToBR(dateInput);
         const [year, month] = dateInput.split('-');
         const monthKey = `${year}-${month}`;
@@ -2200,35 +2371,43 @@
         });
         
         await saveToFirebase();
-        if (monthKey === selectedMonthKey) updateReportTable();
-        else {
-          selectedMonthKey = monthKey;
-          monthSelect.value = selectedMonthKey;
+        
+        // Se o mês salvo for o atualmente selecionado, atualizar tabela
+        if (monthKey === selectedMonthKey) {
           updateReportTable();
         }
+        
+        // Atualizar grid de meses para mostrar indicador de dados
+        generateMonthsGrid();
+        
         showToast('success', 'Dia salvo!');
-        document.getElementById('edit-shift1').value = '';
-        document.getElementById('edit-shift2').value = '';
+        editShift1.value = '';
+        editShift2.value = '';
+        
+        // Resetar validação
+        dateWarning.classList.remove('show');
       };
 
-      // Gerar PDF COM LOGO CENTRALIZADO E MAIOR
+      // Gerar PDF PROFISSIONAL E BONITO
       document.getElementById('btn-generate-pdf').onclick = async () => {
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF();
         
-        const red = [255, 0, 0];
-        const blue = [0, 48, 135];
+        // Cores LATAM Cargo
+        const latamRed = [255, 0, 0];
+        const latamBlue = [0, 48, 135];
+        const latamDarkBlue = [0, 30, 80];
         
+        // Fundo branco
         doc.setFillColor(255, 255, 255);
         doc.rect(0, 0, 210, 297, 'F');
         
-        // Cabeçalho vermelho LATAM (altura aumentada para 40mm para acomodar logo maior)
-        doc.setFillColor(red[0], red[1], red[2]);
-        doc.rect(0, 0, 210, 40, 'F');
+        // Cabeçalho vermelho superior (mais alto para acomodar logo maior)
+        doc.setFillColor(latamRed[0], latamRed[1], latamRed[2]);
+        doc.rect(0, 0, 210, 45, 'F');
         
-        // TENTAR ADICIONAR LOGO DO ARQUIVO LOCAL - CENTRALIZADO E MAIOR
+        // Tentar adicionar logo
         try {
-          // Tentar carregar logo.png do mesmo diretório
           const logoUrl = 'logo.png';
           const img = new Image();
           img.crossOrigin = "Anonymous";
@@ -2239,7 +2418,6 @@
             img.src = logoUrl;
           });
           
-          // Converter para base64 e adicionar ao PDF
           const canvas = document.createElement('canvas');
           canvas.width = img.width;
           canvas.height = img.height;
@@ -2247,78 +2425,180 @@
           ctx.drawImage(img, 0, 0);
           const imgData = canvas.toDataURL('image/png');
           
-          // AUMENTADO: Altura máxima de 30px (antes era 25px)
-          const imgHeight = 30;
+          const imgHeight = 35;
           const imgWidth = (img.width * imgHeight) / img.height;
           
-          // CENTRALIZADO: Calcular posição X para centralizar na página (largura A4 = 210mm)
           const pageWidth = 210;
-          const xPosition = (pageWidth - imgWidth) / 2; // Centraliza horizontalmente
-          const yPosition = 5; // Posição Y no cabeçalho
+          const xPosition = (pageWidth - imgWidth) / 2;
+          const yPosition = 5;
           
           doc.addImage(imgData, 'PNG', xPosition, yPosition, imgWidth, imgHeight);
           
         } catch (error) {
-          // Fallback: texto estilizado centralizado se logo não encontrado
-          console.log('Logo não encontrado, usando texto:', error);
+          // Fallback: LATAM CARGO em texto estilizado
           doc.setTextColor(255, 255, 255);
-          doc.setFontSize(28); // Aumentado de 24 para 28
+          doc.setFontSize(32);
           doc.setFont('helvetica', 'bold');
-          doc.text('LATAM', 105, 22, { align: 'center' }); // Centralizado no meio da página (x=105)
+          doc.text('LATAM', 105, 20, { align: 'center' });
           
-          doc.setFontSize(14); // Aumentado de 12 para 14
-          doc.setFont('helvetica', 'normal');
-          doc.text('AIRLINES', 105, 30, { align: 'center' }); // Centralizado
+          doc.setFontSize(16);
+          doc.setFont('helvetica', 'bold');
+          doc.text('CARGO', 105, 32, { align: 'center' });
         }
         
-        // Linha azul decorativa (ajustada para nova altura do cabeçalho)
-        doc.setFillColor(blue[0], blue[1], blue[2]);
-        doc.rect(0, 40, 210, 2, 'F');
+        // Faixa azul decorativa abaixo do vermelho
+        doc.setFillColor(latamBlue[0], latamBlue[1], latamBlue[2]);
+        doc.rect(0, 45, 210, 4, 'F');
         
+        // Linha fina vermelha para acabamento
+        doc.setFillColor(latamRed[0], latamRed[1], latamRed[2]);
+        doc.rect(0, 49, 210, 1, 'F');
+        
+        // Área de informações do relatório
         const months = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
         const mIdx = parseInt(selectedMonthKey.split('-')[1]) - 1;
         const year = selectedMonthKey.split('-')[0];
+        const monthName = months[mIdx];
         
-        doc.setTextColor(50, 50, 50);
-        doc.setFontSize(11);
-        doc.text(`${months[mIdx]} ${year}`, 20, 52); // Ajustado Y de 48 para 52
+        // Caixa de informações do período
+        doc.setFillColor(245, 245, 245);
+        doc.roundedRect(15, 58, 180, 35, 3, 3, 'F');
+        
+        // Borda colorida na caixa
+        doc.setDrawColor(latamBlue[0], latamBlue[1], latamBlue[2]);
+        doc.setLineWidth(0.5);
+        doc.roundedRect(15, 58, 180, 35, 3, 3, 'S');
+        
+        // Título do relatório
+        doc.setTextColor(latamBlue[0], latamBlue[1], latamBlue[2]);
+        doc.setFontSize(10);
+        doc.setFont('helvetica', 'normal');
+        doc.text('RELATÓRIO DE DESEMPENHO', 105, 68, { align: 'center' });
+        
+        // Mês e Ano em destaque
+        doc.setTextColor(latamRed[0], latamRed[1], latamRed[2]);
+        doc.setFontSize(24);
+        doc.setFont('helvetica', 'bold');
+        doc.text(`${monthName} ${year}`, 105, 82, { align: 'center' });
+        
+        // Linha decorativa
+        doc.setDrawColor(latamRed[0], latamRed[1], latamRed[2]);
+        doc.setLineWidth(1);
+        doc.line(60, 86, 150, 86);
         
         const data = yearData[selectedMonthKey] || [];
         const total = data.reduce((s, d) => s + d.total, 0);
         const days = data.length;
         
-        doc.setFillColor(240, 240, 240);
-        doc.rect(20, 58, 170, 20, 'F'); // Ajustado Y de 55 para 58
-        doc.setFontSize(12);
-        doc.setTextColor(blue[0], blue[1], blue[2]);
-        doc.text(`Total: ${total.toLocaleString('pt-BR')} | Dias: ${days}`, 105, 71, { align: 'center' }); // Ajustado Y de 68 para 71
+        // Cards de resumo estilizados
+        const cardY = 102;
+        const cardWidth = 42;
+        const cardHeight = 28;
+        const startX = 12;
+        const gap = 3;
         
+        // Função para desenhar card
+        const drawCard = (x, y, w, h, label, value, color) => {
+          // Sombra suave
+          doc.setFillColor(230, 230, 230);
+          doc.roundedRect(x + 1, y + 1, w, h, 2, 2, 'F');
+          
+          // Card principal
+          doc.setFillColor(255, 255, 255);
+          doc.roundedRect(x, y, w, h, 2, 2, 'F');
+          
+          // Borda superior colorida
+          doc.setFillColor(color[0], color[1], color[2]);
+          doc.roundedRect(x, y, w, 4, 2, 2, 'F');
+          doc.rect(x, y + 2, w, 2, 'F');
+          
+          // Label
+          doc.setTextColor(100, 100, 100);
+          doc.setFontSize(8);
+          doc.setFont('helvetica', 'normal');
+          doc.text(label.toUpperCase(), x + w/2, y + 11, { align: 'center' });
+          
+          // Valor
+          doc.setTextColor(color[0], color[1], color[2]);
+          doc.setFontSize(16);
+          doc.setFont('helvetica', 'bold');
+          doc.text(value.toString(), x + w/2, y + 22, { align: 'center' });
+        };
+        
+        // Desenhar cards
+        drawCard(startX, cardY, cardWidth, cardHeight, 'Total de Cargas Inspecionadas', total.toLocaleString('pt-BR'), latamBlue);
+        drawCard(startX + cardWidth + gap, cardY, cardWidth, cardHeight, 'Dias Trabalhados', days.toString(), [0, 150, 0]);
+        drawCard(startX + (cardWidth + gap) * 2, cardY, cardWidth, cardHeight, 'Média Diária', days > 0 ? Math.round(total / days).toLocaleString('pt-BR') : '0', [255, 140, 0]);
+        drawCard(startX + (cardWidth + gap) * 3, cardY, cardWidth, cardHeight, 'Melhor Dia', days > 0 ? Math.max(...data.map(d => d.total)).toLocaleString('pt-BR') : '0', latamRed);
+        
+        // Tabela de dados
         const tableData = data.map(d => [d.date, d.shift1 || '-', d.shift2 || '-', d.total]);
         
         doc.autoTable({
-          startY: 88, // Ajustado de 85 para 88
+          startY: 138,
           head: [['Data', 'Turno 1', 'Turno 2', 'Total']],
           body: tableData,
           theme: 'grid',
-          headStyles: { fillColor: blue, textColor: [255, 255, 255], fontStyle: 'bold' },
-          styles: { fontSize: 10, textColor: [50, 50, 50] },
-          alternateRowStyles: { fillColor: [245, 245, 245] }
+          headStyles: { 
+            fillColor: latamBlue, 
+            textColor: [255, 255, 255], 
+            fontStyle: 'bold',
+            fontSize: 11,
+            halign: 'center',
+            valign: 'middle',
+            cellPadding: 5
+          },
+          styles: { 
+            fontSize: 10, 
+            textColor: [50, 50, 50],
+            cellPadding: 4,
+            halign: 'center',
+            valign: 'middle'
+          },
+          alternateRowStyles: { 
+            fillColor: [248, 248, 248] 
+          },
+          columnStyles: {
+            0: { halign: 'left', cellPadding: { left: 8 } },
+            3: { fontStyle: 'bold', textColor: latamBlue }
+          },
+          margin: { left: 15, right: 15 }
         });
         
-        doc.setFillColor(blue[0], blue[1], blue[2]);
-        doc.rect(0, 280, 210, 17, 'F');
-        doc.setTextColor(255, 255, 255);
-        doc.setFontSize(10);
-        doc.text('LATAM Airlines - Contagem de Cargas', 105, 290, { align: 'center' });
+        // Rodapé
+        const pageHeight = 297;
+        const footerHeight = 25;
         
-        doc.save(`Relatorio_LATAM_${months[mIdx]}_${year}.pdf`);
-        showToast('success', 'PDF gerado!');
+        // Fundo azul do rodapé
+        doc.setFillColor(latamBlue[0], latamBlue[1], latamBlue[2]);
+        doc.rect(0, pageHeight - footerHeight, 210, footerHeight, 'F');
+        
+        // Linha vermelha decorativa no topo do rodapé
+        doc.setFillColor(latamRed[0], latamRed[1], latamRed[2]);
+        doc.rect(0, pageHeight - footerHeight, 210, 3, 'F');
+        
+        // Texto do rodapé
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(9);
+        doc.setFont('helvetica', 'normal');
+        doc.text('LATAM Cargo - Sistema de Contagem de Cargas Inspecionadas', 105, pageHeight - 12, { align: 'center' });
+        
+        // Data e hora da geração
+        const now = new Date();
+        const dateStr = now.toLocaleDateString('pt-BR');
+        const timeStr = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+        doc.setFontSize(8);
+        doc.text(`Relatório gerado em ${dateStr} às ${timeStr}`, 105, pageHeight - 6, { align: 'center' });
+        
+        // Salvar PDF
+        doc.save(`Relatorio_LATAM_Cargo_${monthName}_${year}.pdf`);
+        showToast('success', 'PDF gerado com sucesso!');
       };
 
       // Monitorar status da conexão
       window.addEventListener('online', () => {
         updateConnectionStatus('online');
-        loadData(); // Recarregar quando voltar online
+        loadData();
       });
       
       window.addEventListener('offline', () => {
@@ -2326,8 +2606,7 @@
       });
 
       // Inicializar
-      document.getElementById('edit-date').value = getTodayString(); // CORREÇÃO: Usar função segura
-      initMonthSelector();
+      editDateInput.value = getTodayString();
       await loadData();
       quantityInput.focus();
     });
