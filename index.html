@@ -708,7 +708,7 @@
       z-index: 3000;
     }
 
-    /* NOVO: Modal de Senha para Deletar Dia */
+    /* NOVO: Modal de Senha para Deletar/Editar Dia */
     #password-modal-overlay {
       z-index: 2500;
     }
@@ -914,13 +914,18 @@
       flex: 1;
     }
 
-    /* Editor de Dia */
+    /* Editor de Dia - ATUALIZADO */
     .day-editor {
       background: rgba(255, 255, 255, 0.03);
       border: 1px solid var(--glass-border);
       border-radius: 12px;
       padding: 1rem;
       margin-bottom: 1.5rem;
+      transition: all 0.3s ease;
+    }
+
+    .day-editor.hidden {
+      display: none;
     }
 
     .editor-title {
@@ -980,7 +985,7 @@
     .editor-input:disabled {
       opacity: 0.5;
       cursor: not-allowed;
-      background: rgba(255, 0, 0, 0.05);
+      background: rgba(255, 255, 255, 0.02);
     }
 
     .btn-add-day {
@@ -1019,7 +1024,27 @@
       display: flex;
     }
 
-    /* NOVO: Seletor de Mês Organizado */
+    /* NOVO: Mensagem para dia atual */
+    .today-message {
+      background: rgba(0, 255, 136, 0.1);
+      border: 1px solid rgba(0, 255, 136, 0.3);
+      border-radius: 8px;
+      padding: 1rem;
+      text-align: center;
+      color: var(--success);
+      font-size: 0.9rem;
+      display: none;
+    }
+
+    .today-message.show {
+      display: block;
+    }
+
+    .today-message i {
+      margin-right: 0.5rem;
+    }
+
+    /* Seletor de Mês Organizado */
     .month-selector-container {
       margin-bottom: 1.5rem;
       background: rgba(255, 255, 255, 0.03);
@@ -1187,7 +1212,7 @@
 
     .table-header, .table-row {
       display: grid;
-      grid-template-columns: 1.2fr 0.8fr 0.8fr 0.8fr 0.5fr;
+      grid-template-columns: 1.2fr 0.8fr 0.8fr 0.8fr 0.8fr;
       gap: 0.5rem;
       padding: 0.8rem;
       align-items: center;
@@ -1212,19 +1237,40 @@
     .col-shift-2 { color: var(--secondary); font-weight: 600; }
     .col-total { color: var(--success); font-weight: 700; }
 
-    .btn-delete-day {
+    .action-buttons {
+      display: flex;
+      gap: 0.3rem;
+      justify-content: flex-end;
+    }
+
+    .btn-edit-day, .btn-delete-day {
       width: 28px;
       height: 28px;
       border-radius: 6px;
-      background: rgba(255, 0, 110, 0.1);
-      border: 1px solid rgba(255, 0, 110, 0.3);
-      color: var(--danger);
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 0.8rem;
       transition: all 0.3s ease;
+      border: none;
+    }
+
+    .btn-edit-day {
+      background: rgba(0, 240, 255, 0.1);
+      border: 1px solid rgba(0, 240, 255, 0.3);
+      color: var(--primary);
+    }
+
+    .btn-edit-day:hover {
+      background: rgba(0, 240, 255, 0.3);
+      transform: scale(1.1);
+    }
+
+    .btn-delete-day {
+      background: rgba(255, 0, 110, 0.1);
+      border: 1px solid rgba(255, 0, 110, 0.3);
+      color: var(--danger);
     }
 
     .btn-delete-day:hover {
@@ -1726,14 +1772,14 @@
     </div>
   </div>
 
-  <!-- NOVO: Modal de Senha para Deletar Dia -->
+  <!-- Modal de Senha para Deletar/Editar Dia -->
   <div class="modal-overlay" id="password-modal-overlay">
     <div class="password-modal">
       <div class="password-icon">
         <i class="fas fa-shield-alt"></i>
       </div>
       <h2 class="password-title">Acesso Restrito</h2>
-      <p class="password-subtitle">Digite a senha para deletar este registro</p>
+      <p class="password-subtitle" id="password-subtitle">Digite a senha para acessar este registro</p>
       
       <form class="password-form" id="password-form">
         <div class="password-field">
@@ -1765,22 +1811,22 @@
       </div>
       
       <div class="modal-body">
-        <!-- Editor de Dia -->
-        <div class="day-editor">
+        <!-- Editor de Dia - ATUALIZADO -->
+        <div class="day-editor" id="day-editor">
           <div class="editor-title"><i class="fas fa-edit"></i> Adicionar/Editar Dia</div>
           <div class="editor-grid">
             <div class="editor-field">
               <label>Data</label>
-              <input type="date" class="editor-input" id="edit-date">
+              <input type="date" class="editor-input" id="edit-date" max="">
               <div class="date-warning" id="date-warning">
                 <i class="fas fa-exclamation-triangle"></i> Não é permitido adicionar datas futuras
               </div>
             </div>
-            <div class="editor-field">
+            <div class="editor-field" id="field-shift1">
               <label>Turno 1</label>
               <input type="number" class="editor-input" id="edit-shift1" placeholder="0" min="0">
             </div>
-            <div class="editor-field">
+            <div class="editor-field" id="field-shift2">
               <label>Turno 2</label>
               <input type="number" class="editor-input" id="edit-shift2" placeholder="0" min="0">
             </div>
@@ -1790,7 +1836,13 @@
           </button>
         </div>
 
-        <!-- NOVO: Seletor de Mês Organizado -->
+        <!-- Mensagem para dia atual -->
+        <div class="today-message" id="today-message">
+          <i class="fas fa-info-circle"></i>
+          Para editar o dia atual, utilize o painel principal do sistema. O fechamento de turno atualiza automaticamente este relatório.
+        </div>
+
+        <!-- Seletor de Mês Organizado -->
         <div class="month-selector-container">
           <div class="month-selector-header">
             <div class="month-selector-title">
@@ -2009,8 +2061,9 @@
       let selectorCurrentYear = new Date().getFullYear();
       let selectedMonthKey = '';
 
-      // NOVO: Variáveis para controle de deleção com senha
+      // Variáveis para controle de deleção/edição com senha
       let dayToDelete = null;
+      let dayToEdit = null;
       const DELETE_PASSWORD = '1802';
 
       // Aguardar Firebase estar pronto
@@ -2070,6 +2123,11 @@
         checkDate.setHours(0, 0, 0, 0);
         
         return checkDate > today;
+      }
+
+      // NOVA FUNÇÃO: Verificar se é o dia atual
+      function isToday(dateString) {
+        return dateString === getTodayString();
       }
 
       // Carregar dados do Firestore com listener em tempo real
@@ -2380,14 +2438,29 @@
       const btnPrevYear = document.getElementById('btn-prev-year');
       const btnNextYear = document.getElementById('btn-next-year');
 
-      // NOVO: Elementos do modal de senha
+      // Elementos do modal de senha
       const passwordModal = document.getElementById('password-modal-overlay');
       const passwordForm = document.getElementById('password-form');
       const passwordInput = document.getElementById('delete-password');
       const passwordError = document.getElementById('password-error');
       const btnCancelPassword = document.getElementById('btn-cancel-password');
+      const passwordSubtitle = document.getElementById('password-subtitle');
 
-      // NOVO: Gerar grid de meses
+      // Elementos do editor de dia
+      const dayEditor = document.getElementById('day-editor');
+      const todayMessage = document.getElementById('today-message');
+      const editDateInput = document.getElementById('edit-date');
+      const editShift1 = document.getElementById('edit-shift1');
+      const editShift2 = document.getElementById('edit-shift2');
+      const fieldShift1 = document.getElementById('field-shift1');
+      const fieldShift2 = document.getElementById('field-shift2');
+      const btnSaveDay = document.getElementById('btn-save-day');
+      const dateWarning = document.getElementById('date-warning');
+
+      // Configurar data máxima (hoje) para impedir datas futuras
+      editDateInput.max = getTodayString();
+
+      // Gerar grid de meses
       const generateMonthsGrid = () => {
         const months = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
         monthsGrid.innerHTML = '';
@@ -2441,6 +2514,83 @@
         generateMonthsGrid();
       };
 
+      // NOVA FUNÇÃO: Verificar estado do editor baseado na data selecionada
+      function checkEditorState() {
+        const selectedDate = editDateInput.value;
+        
+        if (!selectedDate) {
+          // Se não houver data selecionada, esconder campos
+          fieldShift1.style.display = 'none';
+          fieldShift2.style.display = 'none';
+          btnSaveDay.style.display = 'none';
+          todayMessage.classList.remove('show');
+          dateWarning.classList.remove('show');
+          return;
+        }
+
+        if (isToday(selectedDate)) {
+          // Se for o dia atual, mostrar mensagem informativa e esconder campos
+          fieldShift1.style.display = 'none';
+          fieldShift2.style.display = 'none';
+          btnSaveDay.style.display = 'none';
+          todayMessage.classList.add('show');
+          dateWarning.classList.remove('show');
+        } else {
+          // Se for data no passado, mostrar campos normalmente
+          fieldShift1.style.display = 'flex';
+          fieldShift2.style.display = 'flex';
+          btnSaveDay.style.display = 'inline-flex';
+          todayMessage.classList.remove('show');
+          
+          // Verificar se é data futura (não deveria acontecer devido ao max, mas por segurança)
+          if (isFutureDate(selectedDate)) {
+            dateWarning.classList.add('show');
+            btnSaveDay.disabled = true;
+            editShift1.disabled = true;
+            editShift2.disabled = true;
+          } else {
+            dateWarning.classList.remove('show');
+            btnSaveDay.disabled = false;
+            editShift1.disabled = false;
+            editShift2.disabled = false;
+          }
+        }
+      }
+
+      // Event listener para mudança de data
+      editDateInput.addEventListener('change', () => {
+        const selectedDate = editDateInput.value;
+        
+        if (!selectedDate) {
+          checkEditorState();
+          return;
+        }
+
+        // Verificar se a data já existe nos dados
+        const [year, month] = selectedDate.split('-');
+        const monthKey = `${year}-${month}`;
+        const dateStr = formatDateToBR(selectedDate);
+        
+        if (yearData[monthKey]) {
+          const existingEntry = yearData[monthKey].find(e => e.date === dateStr);
+          if (existingEntry) {
+            // Se existir, preencher os campos
+            editShift1.value = existingEntry.shift1 || '';
+            editShift2.value = existingEntry.shift2 || '';
+          } else {
+            // Se não existir, limpar campos
+            editShift1.value = '';
+            editShift2.value = '';
+          }
+        } else {
+          // Se não existir mês, limpar campos
+          editShift1.value = '';
+          editShift2.value = '';
+        }
+        
+        checkEditorState();
+      });
+
       const updateReportTable = () => {
         const data = yearData[selectedMonthKey] || [];
         const total = data.reduce((s, d) => s + d.total, 0);
@@ -2467,37 +2617,80 @@
             <div class="col-shift-1">${d.shift1 || '-'}</div>
             <div class="col-shift-2">${d.shift2 || '-'}</div>
             <div class="col-total">${d.total}</div>
-            <div><button class="btn-delete-day" onclick="requestDeleteDay('${d.date}')"><i class="fas fa-trash"></i></button></div>
+            <div class="action-buttons">
+              <button class="btn-edit-day" onclick="requestEditDay('${d.date}', ${d.shift1 || 0}, ${d.shift2 || 0})" title="Editar">
+                <i class="fas fa-edit"></i>
+              </button>
+              <button class="btn-delete-day" onclick="requestDeleteDay('${d.date}')" title="Deletar">
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
           `;
           tbody.appendChild(row);
         });
       };
 
-      // NOVO: Função para solicitar deleção com senha
-      window.requestDeleteDay = (date) => {
-        dayToDelete = date;
+      // Função para solicitar edição com senha
+      window.requestEditDay = (date, shift1, shift2) => {
+        dayToEdit = { date, shift1, shift2 };
+        dayToDelete = null;
+        passwordSubtitle.textContent = 'Digite a senha para editar este registro';
         passwordInput.value = '';
         passwordError.classList.remove('show');
         passwordModal.classList.add('show');
         setTimeout(() => passwordInput.focus(), 100);
       };
 
-      // NOVO: Verificar senha e deletar
+      // Função para solicitar deleção com senha
+      window.requestDeleteDay = (date) => {
+        dayToDelete = date;
+        dayToEdit = null;
+        passwordSubtitle.textContent = 'Digite a senha para deletar este registro';
+        passwordInput.value = '';
+        passwordError.classList.remove('show');
+        passwordModal.classList.add('show');
+        setTimeout(() => passwordInput.focus(), 100);
+      };
+
+      // Verificar senha e executar ação (editar ou deletar)
       passwordForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const enteredPassword = passwordInput.value;
         
         if (enteredPassword === DELETE_PASSWORD) {
-          // Senha correta - prosseguir com deleção
+          // Senha correta
           passwordModal.classList.remove('show');
           
-          if (dayToDelete && yearData[selectedMonthKey]) {
-            yearData[selectedMonthKey] = yearData[selectedMonthKey].filter(d => d.date !== dayToDelete);
-            await saveToFirebase();
-            generateMonthsGrid(); // Atualizar indicadores
-            updateReportTable();
-            showToast('success', 'Dia removido com sucesso!');
-            dayToDelete = null;
+          if (dayToDelete) {
+            // Deletar dia
+            if (yearData[selectedMonthKey]) {
+              yearData[selectedMonthKey] = yearData[selectedMonthKey].filter(d => d.date !== dayToDelete);
+              await saveToFirebase();
+              generateMonthsGrid();
+              updateReportTable();
+              showToast('success', 'Dia removido com sucesso!');
+              dayToDelete = null;
+            }
+          } else if (dayToEdit) {
+            // Editar dia - preencher formulário
+            const dateParts = dayToEdit.date.split('/');
+            const dateISO = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`;
+            editDateInput.value = dateISO;
+            editShift1.value = dayToEdit.shift1 || '';
+            editShift2.value = dayToEdit.shift2 || '';
+            
+            // Scroll para o editor
+            dayEditor.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            
+            // Destacar o editor temporariamente
+            dayEditor.style.borderColor = 'var(--primary)';
+            setTimeout(() => {
+              dayEditor.style.borderColor = '';
+            }, 1000);
+            
+            checkEditorState();
+            showToast('success', 'Dia carregado para edição!');
+            dayToEdit = null;
           }
         } else {
           // Senha incorreta
@@ -2513,10 +2706,11 @@
         }
       });
 
-      // NOVO: Cancelar deleção
+      // Cancelar ação de senha
       btnCancelPassword.onclick = () => {
         passwordModal.classList.remove('show');
         dayToDelete = null;
+        dayToEdit = null;
       };
 
       // Fechar modal de senha ao clicar fora
@@ -2524,6 +2718,7 @@
         if (e.target === passwordModal) {
           passwordModal.classList.remove('show');
           dayToDelete = null;
+          dayToEdit = null;
         }
       };
 
@@ -2543,6 +2738,13 @@
         selectorCurrentYear = new Date().getFullYear();
         const currentMonth = new Date().getMonth() + 1;
         selectedMonthKey = `${selectorCurrentYear}-${String(currentMonth).padStart(2, '0')}`;
+        
+        // Resetar editor para data atual
+        editDateInput.value = getTodayString();
+        editShift1.value = '';
+        editShift2.value = '';
+        checkEditorState();
+        
         generateMonthsGrid();
         updateReportTable();
         reportModal.classList.add('show');
@@ -2550,43 +2752,7 @@
       
       document.getElementById('btn-close-report').onclick = () => reportModal.classList.remove('show');
 
-      // Editor de Dia - COM VALIDAÇÃO DE DATA FUTURA
-      const editDateInput = document.getElementById('edit-date');
-      const dateWarning = document.getElementById('date-warning');
-      const btnSaveDay = document.getElementById('btn-save-day');
-      const editShift1 = document.getElementById('edit-shift1');
-      const editShift2 = document.getElementById('edit-shift2');
-
-      // Validar data ao alterar
-      editDateInput.addEventListener('change', () => {
-        validateDateInput();
-      });
-
-      function validateDateInput() {
-        const dateValue = editDateInput.value;
-        if (!dateValue) {
-          dateWarning.classList.remove('show');
-          btnSaveDay.disabled = false;
-          editShift1.disabled = false;
-          editShift2.disabled = false;
-          return true;
-        }
-
-        if (isFutureDate(dateValue)) {
-          dateWarning.classList.add('show');
-          btnSaveDay.disabled = true;
-          editShift1.disabled = true;
-          editShift2.disabled = true;
-          return false;
-        } else {
-          dateWarning.classList.remove('show');
-          btnSaveDay.disabled = false;
-          editShift1.disabled = false;
-          editShift2.disabled = false;
-          return true;
-        }
-      }
-
+      // Salvar dia
       document.getElementById('btn-save-day').onclick = async () => {
         const dateInput = editDateInput.value;
         const s1 = parseInt(editShift1.value) || 0;
@@ -2597,6 +2763,12 @@
         // VALIDAÇÃO: Impedir datas futuras
         if (isFutureDate(dateInput)) {
           showToast('error', 'Não é permitido adicionar datas futuras!');
+          return;
+        }
+        
+        // VALIDAÇÃO: Impedir edição do dia atual
+        if (isToday(dateInput)) {
+          showToast('error', 'Para editar o dia atual, utilize o painel principal!');
           return;
         }
         
@@ -2633,8 +2805,9 @@
         editShift1.value = '';
         editShift2.value = '';
         
-        // Resetar validação
-        dateWarning.classList.remove('show');
+        // Resetar para data atual
+        editDateInput.value = getTodayString();
+        checkEditorState();
       };
 
       // Gerar PDF PROFISSIONAL E BONITO
@@ -2855,7 +3028,6 @@
       });
 
       // Inicializar
-      editDateInput.value = getTodayString();
       await loadData();
       quantityInput.focus();
     });
