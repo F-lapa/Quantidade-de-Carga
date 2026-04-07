@@ -1,0 +1,2011 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>Posto de Trabalho</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #1e40af;
+            --secondary: #10b981;
+            --accent: #d97706;
+            --bg: linear-gradient(135deg, #e0f2fe 0%, #a7f3d0 100%);
+            --card-bg: rgba(255, 255, 255, 0.98);
+            --text: #1e293b;
+            --text-secondary: #475569;
+            --border: rgba(255, 255, 255, 0.2);
+            --shadow: rgba(0, 0, 0, 0.2);
+            --font-base: clamp(14px, 2.5vw, 18px);
+            --space-xs: clamp(0.25rem, 1vw, 0.5rem);
+            --space-sm: clamp(0.5rem, 2vw, 1rem);
+            --space-md: clamp(1rem, 3vw, 1.5rem);
+            --space-lg: clamp(1.5rem, 4vw, 2rem);
+        }
+
+        [data-theme="dark"] {
+            --bg: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            --card-bg: rgba(30, 41, 59, 0.98);
+            --text: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --border: rgba(255, 255, 255, 0.1);
+            --shadow: rgba(0, 0, 0, 0.5);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { font-size: var(--font-base); -webkit-text-size-adjust: 100%; }
+        
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            overflow-x: hidden;
+            position: relative;
+            padding: var(--space-sm);
+            line-height: 1.6;
+        }
+
+        canvas {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 0;
+            opacity: 0.4;
+            pointer-events: none;
+        }
+
+        .container {
+            background: var(--card-bg);
+            padding: var(--space-md);
+            border-radius: clamp(16px, 4vw, 24px);
+            box-shadow: 0 20px 60px var(--shadow);
+            width: 100%;
+            max-width: min(600px, 95vw);
+            position: relative;
+            z-index: 1;
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            animation: zoomIn 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+            margin: var(--space-sm) 0;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-md);
+            flex-wrap: wrap;
+            gap: var(--space-sm);
+        }
+
+        h1 {
+            font-size: clamp(1.3rem, 5vw, 1.8rem);
+            font-weight: 700;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+            line-height: 1.2;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            padding: clamp(0.4rem, 2vw, 0.6rem);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: clamp(1rem, 4vw, 1.2rem);
+            min-width: 44px;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            touch-action: manipulation;
+        }
+
+        .theme-toggle:hover, .theme-toggle:active {
+            background: var(--primary);
+            color: white;
+            transform: rotate(180deg) scale(1.1);
+        }
+
+        .quick-nav {
+            display: flex;
+            gap: var(--space-xs);
+            margin-bottom: var(--space-md);
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .quick-btn {
+            padding: clamp(0.5rem, 2vw, 0.7rem) clamp(0.8rem, 3vw, 1.2rem);
+            border: none;
+            border-radius: 50px;
+            background: linear-gradient(135deg, var(--primary), #3b82f6);
+            color: white;
+            cursor: pointer;
+            font-size: clamp(0.8rem, 3vw, 0.95rem);
+            font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+            min-height: 44px;
+            touch-action: manipulation;
+            flex: 1;
+            min-width: 100px;
+            justify-content: center;
+        }
+
+        .quick-btn:hover, .quick-btn:active {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 8px 20px rgba(30, 64, 175, 0.4);
+        }
+
+        .date-section {
+            background: rgba(0,0,0,0.03);
+            padding: var(--space-md);
+            border-radius: clamp(12px, 3vw, 16px);
+            margin-bottom: var(--space-md);
+        }
+
+        [data-theme="dark"] .date-section {
+            background: rgba(255,255,255,0.05);
+        }
+
+        .date-input-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-sm);
+            margin-bottom: var(--space-sm);
+            flex-wrap: wrap;
+        }
+
+        .date-display {
+            flex: 1;
+            min-width: 200px;
+            padding: clamp(10px, 3vw, 14px) clamp(12px, 3vw, 16px);
+            background: var(--card-bg);
+            border: 2px solid rgba(0,0,0,0.1);
+            border-radius: 12px;
+            font-size: clamp(0.9rem, 3.5vw, 1.1rem);
+            color: var(--text);
+            text-align: center;
+            font-weight: 600;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        [data-theme="dark"] .date-display {
+            border-color: rgba(255,255,255,0.1);
+        }
+
+        .nav-arrows {
+            display: flex;
+            gap: var(--space-xs);
+        }
+
+        .arrow-btn {
+            width: clamp(40px, 10vw, 48px);
+            height: clamp(40px, 10vw, 48px);
+            border: none;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: clamp(0.9rem, 3vw, 1.1rem);
+            min-width: 44px;
+            min-height: 44px;
+            touch-action: manipulation;
+        }
+
+        .arrow-btn:hover, .arrow-btn:active {
+            background: #1e3a8a;
+            transform: scale(1.15);
+            box-shadow: 0 4px 12px rgba(30, 64, 175, 0.3);
+        }
+
+        .calendar-toggle {
+            background: none;
+            border: 2px dashed var(--accent);
+            color: var(--accent);
+            padding: clamp(0.6rem, 2.5vw, 0.8rem);
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: clamp(0.85rem, 3vw, 0.95rem);
+            font-weight: 600;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: var(--space-xs);
+            min-height: 44px;
+            touch-action: manipulation;
+        }
+
+        .calendar-toggle:hover, .calendar-toggle:active {
+            background: var(--accent);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .btn-feriados-latam {
+            background: linear-gradient(135deg, #dc2626, #991b1b);
+            color: white;
+            border: none;
+            padding: clamp(0.6rem, 2.5vw, 0.8rem);
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: clamp(0.85rem, 3vw, 0.95rem);
+            font-weight: 600;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: var(--space-sm);
+            min-height: 44px;
+            touch-action: manipulation;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-xs);
+            box-shadow: 0 4px 15px rgba(220, 38, 38, 0.3);
+        }
+
+        .btn-feriados-latam:hover, .btn-feriados-latam:active {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(220, 38, 38, 0.5);
+        }
+
+        .calendar-view {
+            display: grid;
+            grid-template-rows: 0fr;
+            transition: grid-template-rows 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+            overflow: hidden;
+        }
+
+        .calendar-view.active {
+            grid-template-rows: 1fr;
+        }
+
+        .calendar-inner {
+            overflow: hidden;
+            padding-top: var(--space-md);
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-sm);
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: clamp(0.2rem, 1vw, 0.5rem);
+            text-align: center;
+        }
+
+        .calendar-day-header {
+            font-weight: 700;
+            color: var(--accent);
+            font-size: clamp(0.7rem, 2.5vw, 0.85rem);
+            padding: clamp(0.3rem, 1.5vw, 0.5rem);
+        }
+
+        .calendar-day {
+            aspect-ratio: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: clamp(6px, 2vw, 10px);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            font-size: clamp(0.75rem, 2.8vw, 0.9rem);
+            position: relative;
+            background: rgba(0,0,0,0.03);
+            min-height: 44px;
+            touch-action: manipulation;
+        }
+
+        [data-theme="dark"] .calendar-day {
+            background: rgba(255,255,255,0.05);
+        }
+
+        .calendar-day:hover, .calendar-day:active {
+            transform: scale(1.15);
+            z-index: 2;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .calendar-day.selected {
+            border: 3px solid var(--primary);
+            font-weight: bold;
+            transform: scale(1.1);
+        }
+
+        .calendar-day.other-month {
+            opacity: 0.4;
+        }
+
+        .calendar-day.holiday {
+            background: rgba(239, 68, 68, 0.15);
+            color: #ef4444;
+        }
+
+        .posto-dot {
+            width: clamp(4px, 1.5vw, 6px);
+            height: clamp(4px, 1.5vw, 6px);
+            border-radius: 50%;
+            margin-top: 2px;
+        }
+
+        .result-card {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: clamp(1.5rem, 5vw, 2.5rem) clamp(1rem, 4vw, 2rem);
+            border-radius: clamp(16px, 4vw, 20px);
+            margin: var(--space-md) 0;
+            text-align: center;
+            box-shadow: 0 15px 40px rgba(30, 64, 175, 0.3);
+            transform: scale(0.95) translateY(20px);
+            opacity: 0;
+            transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .result-card.show {
+            transform: scale(1) translateY(0);
+            opacity: 1;
+        }
+
+        .result-card::before {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.15), transparent);
+            transform: rotate(45deg);
+            animation: shimmer 4s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) rotate(45deg); }
+        }
+
+        .posto-icon {
+            font-size: clamp(2.5rem, 8vw, 3.5rem);
+            margin-bottom: var(--space-sm);
+            display: block;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+        }
+
+        .posto-name {
+            font-size: clamp(1.5rem, 6vw, 2.2rem);
+            font-weight: 800;
+            margin-bottom: var(--space-xs);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .posto-date {
+            font-size: clamp(0.9rem, 3.5vw, 1.1rem);
+            opacity: 0.95;
+            margin-bottom: var(--space-md);
+            font-weight: 500;
+        }
+
+        .posto-badge {
+            position: absolute;
+            top: var(--space-sm);
+            right: var(--space-sm);
+            background: rgba(255,255,255,0.25);
+            padding: clamp(0.2rem, 1vw, 0.4rem) clamp(0.6rem, 2vw, 0.8rem);
+            border-radius: 50px;
+            font-size: clamp(0.7rem, 2.5vw, 0.85rem);
+            font-weight: 700;
+            backdrop-filter: blur(10px);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .action-section {
+            display: flex;
+            gap: var(--space-sm);
+            justify-content: center;
+            margin-top: var(--space-md);
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            padding: clamp(0.8rem, 3vw, 1rem) clamp(1.2rem, 4vw, 1.8rem);
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: clamp(0.85rem, 3.2vw, 1rem);
+            font-weight: 700;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-xs);
+            min-height: 52px;
+            touch-action: manipulation;
+            flex: 1;
+            min-width: 200px;
+            max-width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-ocorrencia {
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            color: #1e293b;
+            box-shadow: 0 4px 15px rgba(251, 191, 36, 0.3);
+        }
+
+        .btn-ocorrencia:hover, .btn-ocorrencia:active {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(251, 191, 36, 0.5);
+        }
+
+        .btn-whatsapp {
+            background: linear-gradient(135deg, #25d366, #128c7e);
+            color: white;
+            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);
+        }
+
+        .btn-whatsapp:hover, .btn-whatsapp:active {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(37, 211, 102, 0.5);
+        }
+
+        .stats-section {
+            background: rgba(0,0,0,0.03);
+            padding: var(--space-md);
+            border-radius: clamp(12px, 3vw, 16px);
+            margin-top: var(--space-md);
+        }
+
+        [data-theme="dark"] .stats-section {
+            background: rgba(255,255,255,0.05);
+        }
+
+        .section-title {
+            font-size: clamp(1rem, 4vw, 1.2rem);
+            font-weight: 700;
+            margin-bottom: var(--space-md);
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+        }
+
+        .filter-tabs {
+            display: flex;
+            gap: var(--space-xs);
+            margin-bottom: var(--space-md);
+            overflow-x: auto;
+            padding-bottom: var(--space-xs);
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .filter-tabs::-webkit-scrollbar { display: none; }
+
+        .filter-tab {
+            padding: clamp(0.4rem, 2vw, 0.6rem) clamp(0.8rem, 3vw, 1rem);
+            border: none;
+            border-radius: 50px;
+            background: rgba(0,0,0,0.05);
+            color: var(--text-secondary);
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            font-size: clamp(0.8rem, 3vw, 0.9rem);
+            font-weight: 600;
+            min-height: 40px;
+            touch-action: manipulation;
+            flex-shrink: 0;
+        }
+
+        .filter-tab:hover, .filter-tab:active {
+            background: rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+
+        .filter-tab.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 12px rgba(30, 64, 175, 0.3);
+        }
+
+        .ocorrencias-list {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-sm);
+            max-height: 50vh;
+            overflow-y: auto;
+            padding-right: var(--space-xs);
+        }
+
+        .ocorrencia-item {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-xs);
+            padding: clamp(0.8rem, 3vw, 1.2rem);
+            background: var(--card-bg);
+            border-radius: clamp(10px, 3vw, 14px);
+            border-left: 5px solid var(--accent);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+            animation: slideIn 0.4s ease backwards;
+        }
+
+        .ocorrencia-item:hover {
+            transform: translateX(8px) scale(1.01);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .ocorrencia-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: var(--space-xs);
+        }
+
+        .ocorrencia-date {
+            font-weight: 800;
+            color: var(--primary);
+            font-size: clamp(0.85rem, 3.2vw, 1rem);
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+        }
+
+        .ocorrencia-posto {
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+            font-size: clamp(0.75rem, 2.8vw, 0.85rem);
+            color: var(--text-secondary);
+            background: rgba(0,0,0,0.05);
+            padding: clamp(0.2rem, 1vw, 0.3rem) clamp(0.5rem, 2vw, 0.7rem);
+            border-radius: 50px;
+            font-weight: 600;
+        }
+
+        .ocorrencia-text {
+            color: var(--text);
+            font-size: clamp(0.9rem, 3.5vw, 1.05rem);
+            line-height: 1.6;
+            padding: var(--space-sm);
+            background: rgba(0,0,0,0.02);
+            border-radius: 10px;
+            word-wrap: break-word;
+        }
+
+        .ocorrencia-actions {
+            display: flex;
+            gap: var(--space-xs);
+            justify-content: flex-end;
+            margin-top: var(--space-xs);
+        }
+
+        .ocorrencia-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: clamp(0.4rem, 2vw, 0.5rem);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            color: var(--text-secondary);
+            font-size: clamp(1rem, 3.5vw, 1.2rem);
+            min-width: 40px;
+            min-height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            touch-action: manipulation;
+        }
+
+        .ocorrencia-btn:hover, .ocorrencia-btn:active {
+            background: rgba(0,0,0,0.08);
+            color: var(--primary);
+            transform: scale(1.1);
+        }
+
+        .ocorrencia-btn.delete:hover, .ocorrencia-btn.delete:active {
+            color: #ef4444;
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: clamp(2rem, 8vw, 3rem) var(--space-md);
+            color: var(--text-secondary);
+            font-style: italic;
+            font-size: clamp(0.95rem, 3.5vw, 1.1rem);
+        }
+
+        .empty-state i {
+            font-size: clamp(2rem, 8vw, 3rem);
+            margin-bottom: var(--space-sm);
+            opacity: 0.4;
+            display: block;
+        }
+
+        .footer {
+            margin-top: var(--space-lg);
+            text-align: center;
+            font-size: clamp(0.8rem, 3vw, 0.95rem);
+            color: var(--text-secondary);
+            padding: var(--space-sm);
+        }
+
+        .footer a {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 700;
+            position: relative;
+        }
+
+        .footer a::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent);
+            transition: width 0.3s ease;
+        }
+
+        .footer a:hover::after {
+            width: 100%;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0);
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+            backdrop-filter: blur(0px);
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(8px);
+        }
+
+        .modal {
+            background: var(--card-bg);
+            width: 100%;
+            max-width: 600px;
+            max-height: 90vh;
+            border-radius: clamp(20px, 5vw, 30px) clamp(20px, 5vw, 30px) 0 0;
+            padding: var(--space-lg);
+            transform: translateY(100%);
+            transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+            overflow-y: auto;
+            box-shadow: 0 -10px 40px rgba(0,0,0,0.2);
+        }
+
+        .modal-overlay.active .modal {
+            transform: translateY(0);
+        }
+
+        @media (min-width: 640px) {
+            .modal-overlay {
+                align-items: center;
+                padding: var(--space-md);
+            }
+            .modal {
+                border-radius: clamp(20px, 4vw, 30px);
+                transform: translateY(50px) scale(0.9);
+                max-height: 85vh;
+            }
+            .modal-overlay.active .modal {
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-md);
+            padding-bottom: var(--space-sm);
+            border-bottom: 2px solid rgba(0,0,0,0.05);
+        }
+
+        .modal-title {
+            font-size: clamp(1.2rem, 4.5vw, 1.5rem);
+            font-weight: 800;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: clamp(1.3rem, 4vw, 1.6rem);
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: all 0.3s ease;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            touch-action: manipulation;
+        }
+
+        .modal-close:hover, .modal-close:active {
+            color: var(--accent);
+            background: rgba(0,0,0,0.05);
+            transform: rotate(90deg);
+        }
+
+        .form-group {
+            margin-bottom: var(--space-md);
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: var(--space-xs);
+            font-weight: 700;
+            color: var(--text);
+            font-size: clamp(0.85rem, 3.2vw, 0.95rem);
+        }
+
+        .form-input, .form-textarea {
+            width: 100%;
+            padding: clamp(12px, 3.5vw, 16px);
+            border: 2px solid rgba(0,0,0,0.1);
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: clamp(0.95rem, 3.5vw, 1.1rem);
+            background: var(--card-bg);
+            color: var(--text);
+            transition: all 0.3s ease;
+        }
+
+        [data-theme="dark"] .form-input, [data-theme="dark"] .form-textarea {
+            border-color: rgba(255,255,255,0.15);
+        }
+
+        .form-input:focus, .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(30, 64, 175, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 120px;
+            line-height: 1.5;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: var(--space-sm);
+            margin-top: var(--space-md);
+            flex-wrap: wrap;
+        }
+
+        .btn-primary, .btn-secondary {
+            flex: 1;
+            min-width: 140px;
+            padding: clamp(14px, 4vw, 16px);
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: clamp(0.95rem, 3.5vw, 1.05rem);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            min-height: 52px;
+            touch-action: manipulation;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-xs);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), #3b82f6);
+            color: white;
+            box-shadow: 0 4px 15px rgba(30, 64, 175, 0.3);
+        }
+
+        .btn-primary:hover, .btn-primary:active {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(30, 64, 175, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(0,0,0,0.05);
+            color: var(--text);
+            border: 2px solid rgba(0,0,0,0.1);
+        }
+
+        .btn-secondary:hover, .btn-secondary:active {
+            background: rgba(0,0,0,0.1);
+            transform: translateY(-3px);
+        }
+
+        .feriados-header {
+            background: linear-gradient(135deg, #dc2626, #991b1b);
+            color: white;
+            padding: var(--space-md);
+            border-radius: clamp(16px, 4vw, 20px);
+            margin-bottom: var(--space-md);
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(220, 38, 38, 0.3);
+        }
+
+        .feriados-header h2 {
+            font-size: clamp(1.3rem, 5vw, 1.8rem);
+            font-weight: 800;
+            margin-bottom: var(--space-xs);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-xs);
+        }
+
+        .feriados-header p {
+            font-size: clamp(0.9rem, 3.5vw, 1rem);
+            opacity: 0.95;
+        }
+
+        .feriados-count {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            padding: clamp(0.2rem, 1vw, 0.4rem) clamp(0.8rem, 3vw, 1rem);
+            border-radius: 50px;
+            font-weight: 700;
+            margin-top: var(--space-xs);
+            font-size: clamp(0.85rem, 3vw, 0.95rem);
+        }
+
+        .feriados-list {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-sm);
+            max-height: 50vh;
+            overflow-y: auto;
+            padding-right: var(--space-xs);
+        }
+
+        .feriado-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            padding: clamp(0.8rem, 3vw, 1.2rem);
+            background: var(--card-bg);
+            border-radius: clamp(12px, 3vw, 16px);
+            border: 2px solid rgba(220, 38, 38, 0.15);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+            animation: slideIn 0.4s ease backwards;
+        }
+
+        .feriado-item:hover {
+            transform: translateX(8px) scale(1.02);
+            border-color: rgba(220, 38, 38, 0.3);
+            box-shadow: 0 8px 20px rgba(220, 38, 38, 0.15);
+        }
+
+        .feriado-icon {
+            width: clamp(48px, 12vw, 56px);
+            height: clamp(48px, 12vw, 56px);
+            background: linear-gradient(135deg, #dc2626, #991b1b);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: clamp(1.5rem, 5vw, 1.8rem);
+            flex-shrink: 0;
+            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+        }
+
+        .feriado-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .feriado-nome {
+            font-weight: 700;
+            color: var(--text);
+            font-size: clamp(0.95rem, 3.5vw, 1.1rem);
+            margin-bottom: var(--space-xs);
+            line-height: 1.3;
+        }
+
+        .feriado-data {
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+            color: var(--text-secondary);
+            font-size: clamp(0.85rem, 3.2vw, 0.95rem);
+            font-weight: 600;
+        }
+
+        .feriado-badge {
+            background: linear-gradient(135deg, #dc2626, #991b1b);
+            color: white;
+            padding: clamp(0.2rem, 1vw, 0.3rem) clamp(0.6rem, 2vw, 0.8rem);
+            border-radius: 50px;
+            font-size: clamp(0.7rem, 2.5vw, 0.8rem);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            flex-shrink: 0;
+        }
+
+        .feriados-empty {
+            text-align: center;
+            padding: clamp(2rem, 8vw, 3rem) var(--space-md);
+            color: var(--text-secondary);
+        }
+
+        .feriados-empty i {
+            font-size: clamp(3rem, 10vw, 4rem);
+            margin-bottom: var(--space-sm);
+            color: #dc2626;
+            opacity: 0.6;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: clamp(1rem, 5vw, 2rem);
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--text);
+            color: white;
+            padding: clamp(0.8rem, 3vw, 1rem) clamp(1.5rem, 5vw, 2rem);
+            border-radius: 50px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            z-index: 2000;
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+            font-weight: 600;
+            font-size: clamp(0.9rem, 3.5vw, 1rem);
+            text-align: center;
+            max-width: 90vw;
+            pointer-events: none;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        @keyframes zoomIn {
+            from { opacity: 0; transform: scale(0.9) translateY(20px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        *:focus-visible {
+            outline: 3px solid var(--accent);
+            outline-offset: 2px;
+        }
+
+        button:focus-visible {
+            outline-offset: 4px;
+        }
+
+        *:focus:not(:focus-visible) {
+            outline: none;
+        }
+
+        .ocorrencia-item:nth-child(1) { animation-delay: 0ms; }
+        .ocorrencia-item:nth-child(2) { animation-delay: 50ms; }
+        .ocorrencia-item:nth-child(3) { animation-delay: 100ms; }
+        .ocorrencia-item:nth-child(4) { animation-delay: 150ms; }
+        .ocorrencia-item:nth-child(5) { animation-delay: 200ms; }
+
+        .feriado-item:nth-child(1) { animation-delay: 0ms; }
+        .feriado-item:nth-child(2) { animation-delay: 50ms; }
+        .feriado-item:nth-child(3) { animation-delay: 100ms; }
+        .feriado-item:nth-child(4) { animation-delay: 150ms; }
+        .feriado-item:nth-child(5) { animation-delay: 200ms; }
+        .feriado-item:nth-child(6) { animation-delay: 250ms; }
+        .feriado-item:nth-child(7) { animation-delay: 300ms; }
+        .feriado-item:nth-child(8) { animation-delay: 350ms; }
+        .feriado-item:nth-child(9) { animation-delay: 400ms; }
+        .feriado-item:nth-child(10) { animation-delay: 450ms; }
+
+        .ocorrencias-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .ocorrencias-list::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.05);
+            border-radius: 10px;
+        }
+
+        .ocorrencias-list::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 10px;
+        }
+
+        .feriados-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .feriados-list::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.05);
+            border-radius: 10px;
+        }
+
+        .feriados-list::-webkit-scrollbar-thumb {
+            background: #dc2626;
+            border-radius: 10px;
+        }
+
+        @supports (-webkit-touch-callout: none) {
+            body {
+                overscroll-behavior-y: none;
+            }
+        }
+    </style>
+<base target="_blank">
+</head>
+<body>
+    <canvas id="particles"></canvas>
+    
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-briefcase"></i> Posto de Trabalho</h1>
+            <button class="theme-toggle" onclick="toggleTheme()" title="Alternar tema" aria-label="Alternar tema">
+                <i class="fas fa-moon"></i>
+            </button>
+        </div>
+
+        <div class="quick-nav">
+            <button class="quick-btn" onclick="setDate('today')">
+                <i class="fas fa-calendar-day"></i> Hoje
+            </button>
+            <button class="quick-btn" onclick="setDate('tomorrow')">
+                <i class="fas fa-calendar-plus"></i> Amanhã
+            </button>
+            <button class="quick-btn" onclick="setDate('week')">
+                <i class="fas fa-calendar-week"></i> Semana
+            </button>
+        </div>
+
+        <div class="date-section">
+
+            <button class="calendar-toggle" onclick="toggleCalendar()">
+                <i class="fas fa-calendar-alt"></i> 
+                <span id="calendarBtnText">Ver Calendário Mensal</span>
+            </button>
+
+            <button class="btn-feriados-latam" onclick="openFeriadosModal()" aria-label="Ver feriados LATAM Cargo">
+                <i class="fas fa-plane"></i> Feriados LATAM Cargo
+            </button>
+
+            <div class="calendar-view" id="calendarView">
+                <div class="calendar-inner">
+                    <div class="calendar-header">
+                        <button class="arrow-btn" onclick="changeMonth(-1)" aria-label="Mês anterior">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <span id="currentMonthYear" style="font-weight: 700; font-size: clamp(1rem, 3.5vw, 1.2rem);"></span>
+                        <button class="arrow-btn" onclick="changeMonth(1)" aria-label="Próximo mês">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                    <div class="calendar-grid" id="calendarGrid"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="result-card" id="resultCard">
+            <span class="posto-badge" id="postoBadge">POSTO</span>
+            <i class="posto-icon" id="postoIcon">📍</i>
+            <div class="posto-name" id="postoName">Selecione uma data</div>
+            <div class="posto-date" id="postoDate">-</div>
+            
+            <div class="action-section">
+                <button class="action-btn btn-ocorrencia" onclick="openModal()" aria-label="Adicionar ocorrência">
+                    <i class="fas fa-plus-circle"></i> Adicionar Ocorrência
+                </button>
+                <button class="action-btn btn-whatsapp" onclick="shareOcorrenciasWhatsApp()" aria-label="Enviar ocorrências por WhatsApp">
+                    <i class="fab fa-whatsapp"></i> Enviar Ocorrências
+                </button>
+            </div>
+        </div>
+
+        <div class="stats-section">
+            <div class="section-title">
+                <i class="fas fa-clipboard-list"></i>
+                Histórico de Ocorrências
+            </div>
+            
+            <div class="filter-tabs" id="filterTabs" role="tablist">
+                <button class="filter-tab active" onclick="filterOcorrencias('all')" role="tab" aria-selected="true">Todas</button>
+            </div>
+
+            <div class="ocorrencias-list" id="ocorrenciasList">
+                <div class="empty-state">
+                    <i class="fas fa-inbox"></i>
+                    <p>Nenhuma ocorrência registrada</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            Desenvolvido por <a href="#">Fernando Lapa</a>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modalOverlay" onclick="handleOverlayClick(event)">
+        <div class="modal" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <div class="modal-title">
+                    <i class="fas fa-plus-circle" style="color: var(--accent);"></i>
+                    Adicionar Ocorrência
+                </div>
+                <button class="modal-close" onclick="closeModal()" aria-label="Fechar modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label" for="ocorrenciaDate">Data</label>
+                <input type="date" class="form-input" id="ocorrenciaDate" aria-label="Data da ocorrência">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label" for="ocorrenciaPosto">Posto</label>
+                <input type="text" class="form-input" id="ocorrenciaPosto" readonly aria-label="Posto da ocorrência">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label" for="ocorrenciaDesc">Descrição da Ocorrência</label>
+                <textarea class="form-textarea" id="ocorrenciaDesc" placeholder="Descreva o que aconteceu..." aria-label="Descrição da ocorrência"></textarea>
+            </div>
+            
+            <div class="modal-actions">
+                <button class="btn-secondary" onclick="closeModal()">Cancelar</button>
+                <button class="btn-primary" onclick="saveOcorrencia()">
+                    <i class="fas fa-save"></i> Salvar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="feriadosModalOverlay" onclick="handleFeriadosOverlayClick(event)">
+        <div class="modal" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <div class="modal-title" style="color: #dc2626;">
+                    <i class="fas fa-plane"></i>
+                    Feriados LATAM Cargo
+                </div>
+                <button class="modal-close" onclick="closeFeriadosModal()" aria-label="Fechar modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="feriados-header">
+                <h2><i class="fas fa-calendar-check"></i> Feriados no Posto</h2>
+                <p>Dias de folga quando você estiver no LATAM Cargo</p>
+                <span class="feriados-count" id="feriadosCount">0 feriados</span>
+            </div>
+            
+            <div class="feriados-list" id="feriadosList">
+            </div>
+            
+            <div class="modal-actions" style="margin-top: var(--space-lg);">
+                <button class="btn-secondary" onclick="closeFeriadosModal()">Fechar</button>
+                <button class="btn-primary" onclick="compartilharFeriados()" style="background: linear-gradient(135deg, #dc2626, #991b1b);">
+                    <i class="fab fa-whatsapp"></i> Compartilhar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast" role="alert" aria-live="polite"></div>
+
+    <script>
+        // Configurações
+        const postos = ["G3", "G4", "Pedreira", "Cot", "Udp interna", "Udp externa", "Ctt"];
+        const postosInfo = {
+            "G3": { icon: "🏭", color: "#3b82f6", desc: "Galpão 3" },
+            "G4": { icon: "🏭", color: "#8b5cf6", desc: "Galpão 4" },
+            "Pedreira": { icon: "⛏️", color: "#f59e0b", desc: "Área de Pedreira" },
+            "Cot": { icon: "📋", color: "#10b981", desc: "Centro de Operações" },
+            "Udp interna": { icon: "🏠", color: "#ec4899", desc: "UDP Interna" },
+            "Udp externa": { icon: "🚛", color: "#f97316", desc: "UDP Externa" },
+            "Ctt": { icon: "📦", color: "#06b6d4", desc: "Centro de Triagem" },
+            "LATAM CARGO": { icon: "✈️", color: "#ef4444", desc: "Operação Aérea" }
+        };
+
+        // Feriados nacionais fixos (não movem) - formato: Mês/Dia
+        const feriadosFixos = [
+            { mes: 1, dia: 1, nome: "Confraternização Universal" },
+            { mes: 4, dia: 21, nome: "Tiradentes" },
+            { mes: 5, dia: 1, nome: "Dia do Trabalho" },
+            { mes: 9, dia: 7, nome: "Independência do Brasil" },
+            { mes: 10, dia: 12, nome: "Nossa Senhora Aparecida" },
+            { mes: 11, dia: 2, nome: "Finados" },
+            { mes: 11, dia: 15, nome: "Proclamação da República" },
+            { mes: 12, dia: 25, nome: "Natal" }
+        ];
+
+        // Datas de referência da escala (formato: Ano, Mês, Dia)
+        // referenceDate: 14/03/2025 é um dia de posto normal (G3, G4, etc)
+        const REFERENCE_DATE = { ano: 2025, mes: 3, dia: 14 };
+        
+        let currentDate = new Date();
+        let calendarDate = new Date();
+        let currentPosto = "";
+        let ocorrencias = JSON.parse(localStorage.getItem('ocorrencias') || '[]');
+        let currentFilter = 'all';
+        let isModalOpen = false;
+        let isFeriadosModalOpen = false;
+
+        // ========== FUNÇÕES UTILITÁRIAS DE DATA ==========
+        
+        function criarData(ano, mes, dia) {
+            return new Date(ano, mes - 1, dia, 12, 0, 0, 0);
+        }
+        
+        function normalizarData(data) {
+            const d = new Date(data);
+            d.setHours(0, 0, 0, 0);
+            return d;
+        }
+        
+        function mesmoDia(d1, d2) {
+            return d1.getFullYear() === d2.getFullYear() &&
+                   d1.getMonth() === d2.getMonth() &&
+                   d1.getDate() === d2.getDate();
+        }
+        
+        function formatarData(data) {
+            return data.toLocaleDateString('pt-BR', { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+        }
+
+        // ========== LÓGICA DA ESCALA DE TRABALHO ==========
+        
+        function calcularPostoNaData(data) {
+            const refDate = criarData(REFERENCE_DATE.ano, REFERENCE_DATE.mes, REFERENCE_DATE.dia);
+            const targetDate = new Date(data);
+            targetDate.setHours(12, 0, 0, 0);
+            
+            const diffTime = targetDate - refDate;
+            const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+            
+            let posto, isLatam;
+            
+            if (diffDays % 2 === 0) {
+                const ciclos = Math.floor(diffDays / 2);
+                const postoIndex = ((ciclos % 7) + 7) % 7;
+                posto = postos[postoIndex];
+                isLatam = false;
+            } else {
+                posto = "LATAM CARGO";
+                isLatam = true;
+            }
+            
+            return { posto, isLatam };
+        }
+
+        // ========== INICIALIZAÇÃO ==========
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            initParticles();
+            loadTheme();
+            
+            // Inicializa com hoje
+            const hoje = new Date();
+            hoje.setHours(12, 0, 0, 0);
+            currentDate = hoje;
+            calculatePosto(hoje);
+            
+            renderFilterTabs();
+            renderOcorrencias();
+            
+            // Keyboard navigation
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowLeft' && !isModalOpen && !isFeriadosModalOpen) changeDate(-1);
+                if (e.key === 'ArrowRight' && !isModalOpen && !isFeriadosModalOpen) changeDate(1);
+                if (e.key === 'Escape' && isModalOpen) closeModal();
+                if (e.key === 'Escape' && isFeriadosModalOpen) closeFeriadosModal();
+            });
+
+            // Prevenir scroll quando modal aberto
+            document.getElementById('modalOverlay').addEventListener('touchmove', (e) => {
+                if (e.target === document.getElementById('modalOverlay')) e.preventDefault();
+            }, { passive: false });
+
+            document.getElementById('feriadosModalOverlay').addEventListener('touchmove', (e) => {
+                if (e.target === document.getElementById('feriadosModalOverlay')) e.preventDefault();
+            }, { passive: false });
+        });
+
+        function updateDateDisplay() {
+            const display = document.getElementById('dateDisplay');
+            if (display) {
+                display.textContent = currentDate.toLocaleDateString('pt-BR');
+            }
+        }
+
+        function calculatePosto(date) {
+            const resultado = calcularPostoNaData(date);
+            currentPosto = resultado.posto;
+            updateDateDisplay();
+            displayResult(date, resultado.posto, resultado.isLatam);
+            
+            if (document.getElementById('calendarView').classList.contains('active')) {
+                renderCalendar();
+            }
+        }
+
+        function displayResult(date, posto, isLatam) {
+            const card = document.getElementById('resultCard');
+            const info = postosInfo[posto] || { icon: "📍", color: "#666", desc: "" };
+            
+            card.classList.remove('show');
+            
+            setTimeout(() => {
+                document.getElementById('postoIcon').textContent = info.icon;
+                document.getElementById('postoName').textContent = posto;
+                document.getElementById('postoName').style.color = info.color;
+                document.getElementById('postoDate').textContent = formatarData(date);
+                document.getElementById('postoBadge').textContent = isLatam ? 'LATAM' : 'POSTO';
+                document.getElementById('postoBadge').style.background = isLatam ? 'rgba(239, 68, 68, 0.3)' : 'rgba(255,255,255,0.2)';
+                
+                card.style.background = isLatam 
+                    ? 'linear-gradient(135deg, #dc2626, #991b1b)' 
+                    : `linear-gradient(135deg, ${info.color}, ${adjustColor(info.color, -40)})`;
+                
+                card.classList.add('show');
+            }, 50);
+        }
+
+        function adjustColor(color, amount) {
+            const num = parseInt(color.replace("#",""), 16);
+            const amt = Math.round(2.55 * amount);
+            const R = (num >> 16) + amt;
+            const G = (num >> 8 & 0x00FF) + amt;
+            const B = (num & 0x0000FF) + amt;
+            return "#" + (0x1000000 + (R<255?R<1?0:R:255)*0x10000 + 
+                   (G<255?G<1?0:G:255)*0x100 + (B<255?B<1?0:B:255))
+                   .toString(16).slice(1);
+        }
+
+        function setDate(type) {
+            const today = new Date();
+            today.setHours(12, 0, 0, 0);
+            let date;
+            
+            switch(type) {
+                case 'today':
+                    date = today;
+                    break;
+                case 'tomorrow':
+                    date = new Date(today);
+                    date.setDate(date.getDate() + 1);
+                    break;
+                case 'week':
+                    date = new Date(today);
+                    date.setDate(date.getDate() + 7);
+                    break;
+            }
+            
+            currentDate = date;
+            calculatePosto(date);
+        }
+
+        function changeDate(days) {
+            const newDate = new Date(currentDate);
+            newDate.setDate(newDate.getDate() + days);
+            newDate.setHours(12, 0, 0, 0);
+            
+            currentDate = newDate;
+            calculatePosto(newDate);
+        }
+
+        function toggleCalendar() {
+            const view = document.getElementById('calendarView');
+            const btnText = document.getElementById('calendarBtnText');
+            
+            if (view.classList.contains('active')) {
+                view.classList.remove('active');
+                btnText.textContent = 'Ver Calendário Mensal';
+            } else {
+                view.classList.add('active');
+                btnText.textContent = 'Ocultar Calendário';
+                renderCalendar();
+            }
+        }
+
+        function changeMonth(delta) {
+            calendarDate.setMonth(calendarDate.getMonth() + delta);
+            renderCalendar();
+        }
+
+        function renderCalendar() {
+            const year = calendarDate.getFullYear();
+            const month = calendarDate.getMonth();
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const daysInPrevMonth = new Date(year, month, 0).getDate();
+            
+            document.getElementById('currentMonthYear').textContent = 
+                calendarDate.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+            
+            const grid = document.getElementById('calendarGrid');
+            grid.innerHTML = '';
+            
+            ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'].forEach(day => {
+                const div = document.createElement('div');
+                div.className = 'calendar-day-header';
+                div.textContent = day;
+                grid.appendChild(div);
+            });
+            
+            for (let i = firstDay - 1; i >= 0; i--) {
+                const day = daysInPrevMonth - i;
+                const div = createCalendarDay(day, true);
+                grid.appendChild(div);
+            }
+            
+            for (let day = 1; day <= daysInMonth; day++) {
+                const date = criarData(year, month + 1, day);
+                const div = createCalendarDay(day, false, date);
+                
+                if (mesmoDia(date, currentDate)) {
+                    div.classList.add('selected');
+                }
+                
+                const feriado = feriadosFixos.find(f => f.mes === (month + 1) && f.dia === day);
+                if (feriado) {
+                    div.classList.add('holiday');
+                    div.title = feriado.nome;
+                }
+                
+                const resultado = calcularPostoNaData(date);
+                const dot = document.createElement('div');
+                dot.className = 'posto-dot';
+                dot.style.background = postosInfo[resultado.posto]?.color || '#666';
+                div.appendChild(dot);
+                
+                div.onclick = () => {
+                    currentDate = date;
+                    calculatePosto(date);
+                    renderCalendar();
+                };
+                
+                grid.appendChild(div);
+            }
+            
+            const remainingCells = 42 - (firstDay + daysInMonth);
+            for (let day = 1; day <= remainingCells; day++) {
+                const div = createCalendarDay(day, true);
+                grid.appendChild(div);
+            }
+        }
+
+        function createCalendarDay(day, isOtherMonth, date) {
+            const div = document.createElement('div');
+            div.className = 'calendar-day';
+            if (isOtherMonth) div.classList.add('other-month');
+            div.textContent = day;
+            div.setAttribute('role', 'button');
+            div.setAttribute('tabindex', '0');
+            if (date) {
+                div.setAttribute('aria-label', formatarData(date));
+            }
+            return div;
+        }
+
+        // ========== MODAL FERIADOS LATAM ==========
+        
+        function openFeriadosModal() {
+            isFeriadosModalOpen = true;
+            const overlay = document.getElementById('feriadosModalOverlay');
+            overlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            
+            calcularFeriadosLatam();
+        }
+
+        function closeFeriadosModal() {
+            isFeriadosModalOpen = false;
+            const overlay = document.getElementById('feriadosModalOverlay');
+            overlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        function handleFeriadosOverlayClick(event) {
+            if (event.target === document.getElementById('feriadosModalOverlay')) {
+                closeFeriadosModal();
+            }
+        }
+
+        function calcularFeriadosLatam() {
+            const feriadosLatam = [];
+            const anoAtual = new Date().getFullYear();
+            
+            feriadosFixos.forEach(feriado => {
+                const dataFeriado = criarData(anoAtual, feriado.mes, feriado.dia);
+                const resultado = calcularPostoNaData(dataFeriado);
+                
+                if (resultado.isLatam) {
+                    feriadosLatam.push({
+                        nome: feriado.nome,
+                        data: dataFeriado,
+                        diaSemana: dataFeriado.toLocaleDateString('pt-BR', { weekday: 'long' }),
+                        dataFormatada: dataFeriado.toLocaleDateString('pt-BR')
+                    });
+                }
+            });
+            
+            feriadosLatam.sort((a, b) => a.data - b.data);
+            
+            renderFeriadosList(feriadosLatam);
+        }
+
+        function renderFeriadosList(feriados) {
+            const list = document.getElementById('feriadosList');
+            const countElement = document.getElementById('feriadosCount');
+            
+            countElement.textContent = `${feriados.length} feriado${feriados.length !== 1 ? 's' : ''}`;
+            
+            if (feriados.length === 0) {
+                list.innerHTML = `
+                    <div class="feriados-empty">
+                        <i class="fas fa-plane-slash"></i>
+                        <p>Nenhum feriado cairá no LATAM Cargo este ano</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            list.innerHTML = '';
+            feriados.forEach((feriado, index) => {
+                const div = document.createElement('div');
+                div.className = 'feriado-item';
+                div.style.animationDelay = `${index * 50}ms`;
+                
+                div.innerHTML = `
+                    <div class="feriado-icon">
+                        <i class="fas fa-plane"></i>
+                    </div>
+                    <div class="feriado-info">
+                        <div class="feriado-nome">${feriado.nome}</div>
+                        <div class="feriado-data">
+                            <i class="fas fa-calendar-day"></i>
+                            ${feriado.diaSemana}, ${feriado.dataFormatada}
+                        </div>
+                    </div>
+                    <span class="feriado-badge">Folga</span>
+                `;
+                
+                list.appendChild(div);
+            });
+        }
+
+        function compartilharFeriados() {
+            const feriadosLatam = [];
+            const anoAtual = new Date().getFullYear();
+            
+            feriadosFixos.forEach(feriado => {
+                const dataFeriado = criarData(anoAtual, feriado.mes, feriado.dia);
+                const resultado = calcularPostoNaData(dataFeriado);
+                
+                if (resultado.isLatam) {
+                    feriadosLatam.push({
+                        nome: feriado.nome,
+                        data: dataFeriado
+                    });
+                }
+            });
+            
+            feriadosLatam.sort((a, b) => a.data - b.data);
+            
+            if (feriadosLatam.length === 0) {
+                showToast('Nenhum feriado para compartilhar');
+                return;
+            }
+            
+            let mensagem = `✈️ *Feriados LATAM Cargo - ${anoAtual}* ✈️\n\n`;
+            mensagem += `📅 Total: ${feriadosLatam.length} feriado${feriadosLatam.length !== 1 ? 's' : ''} caindo no posto\n\n`;
+            
+            feriadosLatam.forEach(feriado => {
+                const diaSemana = feriado.data.toLocaleDateString('pt-BR', { weekday: 'long' });
+                const dataFormatada = feriado.data.toLocaleDateString('pt-BR');
+                mensagem += `🎉 *${feriado.nome}*\n`;
+                mensagem += `📆 ${diaSemana}, ${dataFormatada}\n\n`;
+            });
+            
+            mensagem += `✈️ Bons descansos!`;
+            
+            window.open(`https://wa.me/?text=${encodeURIComponent(mensagem)}`, '_blank');
+        }
+
+        // ========== MODAL OCORRÊNCIAS ==========
+        
+        function openModal() {
+            isModalOpen = true;
+            const dateStr = currentDate.toISOString().split('T')[0];
+            document.getElementById('ocorrenciaDate').value = dateStr;
+            document.getElementById('ocorrenciaPosto').value = currentPosto;
+            document.getElementById('ocorrenciaDesc').value = '';
+            
+            const overlay = document.getElementById('modalOverlay');
+            overlay.classList.add('active');
+            
+            setTimeout(() => {
+                document.getElementById('ocorrenciaDesc').focus();
+            }, 100);
+            
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            isModalOpen = false;
+            const overlay = document.getElementById('modalOverlay');
+            overlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        function handleOverlayClick(event) {
+            if (event.target === document.getElementById('modalOverlay')) {
+                closeModal();
+            }
+        }
+
+        function saveOcorrencia() {
+            const dateStr = document.getElementById('ocorrenciaDate').value;
+            const posto = document.getElementById('ocorrenciaPosto').value;
+            const desc = document.getElementById('ocorrenciaDesc').value.trim();
+            
+            if (!desc) {
+                showToast('Por favor, descreva a ocorrência');
+                document.getElementById('ocorrenciaDesc').focus();
+                return;
+            }
+            
+            const ocorrencia = {
+                id: Date.now(),
+                date: dateStr,
+                posto: posto,
+                descricao: desc,
+                timestamp: new Date().toISOString()
+            };
+            
+            ocorrencias.unshift(ocorrencia);
+            localStorage.setItem('ocorrencias', JSON.stringify(ocorrencias));
+            
+            closeModal();
+            showToast('Ocorrência salva com sucesso!');
+            
+            if (currentFilter !== 'all' && currentFilter !== posto) {
+                filterOcorrencias('all');
+            } else {
+                renderOcorrencias();
+            }
+        }
+
+        function deleteOcorrencia(id) {
+            if (confirm('Deseja realmente excluir esta ocorrência?')) {
+                ocorrencias = ocorrencias.filter(o => o.id !== id);
+                localStorage.setItem('ocorrencias', JSON.stringify(ocorrencias));
+                renderOcorrencias();
+                showToast('Ocorrência excluída');
+            }
+        }
+
+        function renderFilterTabs() {
+            const tabsContainer = document.getElementById('filterTabs');
+            const allPostos = [...postos, "LATAM CARGO"];
+            
+            allPostos.forEach(posto => {
+                const btn = document.createElement('button');
+                btn.className = 'filter-tab';
+                btn.textContent = posto;
+                btn.setAttribute('role', 'tab');
+                btn.setAttribute('aria-selected', 'false');
+                btn.onclick = () => filterOcorrencias(posto);
+                tabsContainer.appendChild(btn);
+            });
+        }
+
+        function filterOcorrencias(filtro) {
+            currentFilter = filtro;
+            
+            document.querySelectorAll('.filter-tab').forEach(tab => {
+                const isActive = tab.textContent === filtro || (filtro === 'all' && tab.textContent === 'Todas');
+                tab.classList.toggle('active', isActive);
+                tab.setAttribute('aria-selected', isActive);
+            });
+            
+            renderOcorrencias();
+        }
+
+        function renderOcorrencias() {
+            const list = document.getElementById('ocorrenciasList');
+            let filtered = ocorrencias;
+            
+            if (currentFilter !== 'all') {
+                filtered = ocorrencias.filter(o => o.posto === currentFilter);
+            }
+            
+            if (filtered.length === 0) {
+                list.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-inbox"></i>
+                        <p>${currentFilter === 'all' ? 'Nenhuma ocorrência registrada' : `Nenhuma ocorrência em ${currentFilter}`}</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            list.innerHTML = '';
+            filtered.forEach((ocorrencia, index) => {
+                const info = postosInfo[ocorrencia.posto];
+                const [ano, mes, dia] = ocorrencia.date.split('-').map(Number);
+                const date = criarData(ano, mes, dia);
+                
+                const div = document.createElement('div');
+                div.className = 'ocorrencia-item';
+                div.style.borderLeftColor = info.color;
+                div.style.animationDelay = `${index * 50}ms`;
+                
+                div.innerHTML = `
+                    <div class="ocorrencia-header">
+                        <span class="ocorrencia-date">
+                            <i class="fas fa-calendar-day"></i> 
+                            ${date.toLocaleDateString('pt-BR')}
+                        </span>
+                        <span class="ocorrencia-posto">
+                            ${info.icon} ${ocorrencia.posto}
+                        </span>
+                    </div>
+                    <div class="ocorrencia-text">${escapeHtml(ocorrencia.descricao)}</div>
+                    <div class="ocorrencia-actions">
+                        <button class="ocorrencia-btn" onclick="shareSingleOcorrencia(${ocorrencia.id})" title="Enviar por WhatsApp" aria-label="Enviar por WhatsApp">
+                            <i class="fab fa-whatsapp"></i>
+                        </button>
+                        <button class="ocorrencia-btn delete" onclick="deleteOcorrencia(${ocorrencia.id})" title="Excluir" aria-label="Excluir ocorrência">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                `;
+                
+                list.appendChild(div);
+            });
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function shareOcorrenciasWhatsApp() {
+            if (ocorrencias.length === 0) {
+                showToast('Nenhuma ocorrência para enviar');
+                return;
+            }
+            
+            let mensagem = `*Relatório de Ocorrências - Postos de Trabalho*\n\n`;
+            mensagem += `📅 Gerado em: ${new Date().toLocaleDateString('pt-BR')}\n\n`;
+            
+            const porPosto = {};
+            ocorrencias.forEach(o => {
+                if (!porPosto[o.posto]) porPosto[o.posto] = [];
+                porPosto[o.posto].push(o);
+            });
+            
+            Object.entries(porPosto).forEach(([posto, lista]) => {
+                const info = postosInfo[posto];
+                mensagem += `\n${info.icon} *${posto}* (${lista.length} ocorrência${lista.length > 1 ? 's' : ''})\n`;
+                mensagem += `━━━━━━━━━━━━━━━━\n`;
+                lista.forEach(o => {
+                    const [ano, mes, dia] = o.date.split('-').map(Number);
+                    const date = criarData(ano, mes, dia);
+                    mensagem += `📆 ${date.toLocaleDateString('pt-BR')}\n`;
+                    mensagem += `📝 ${o.descricao}\n\n`;
+                });
+            });
+            
+            window.open(`https://wa.me/?text=${encodeURIComponent(mensagem)}`, '_blank');
+        }
+
+        function shareSingleOcorrencia(id) {
+            const ocorrencia = ocorrencias.find(o => o.id === id);
+            if (!ocorrencia) return;
+            
+            const info = postosInfo[ocorrencia.posto];
+            const [ano, mes, dia] = ocorrencia.date.split('-').map(Number);
+            const date = criarData(ano, mes, dia);
+            
+            const mensagem = `*Ocorrência - ${ocorrencia.posto}*\n\n` +
+                           `📅 Data: ${date.toLocaleDateString('pt-BR')}\n` +
+                           `🏢 Posto: ${info.icon} ${ocorrencia.posto}\n\n` +
+                           `📝 Descrição:\n${ocorrencia.descricao}`;
+            
+            window.open(`https://wa.me/?text=${encodeURIComponent(mensagem)}`, '_blank');
+        }
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const btn = document.querySelector('.theme-toggle i');
+            
+            if (html.getAttribute('data-theme') === 'dark') {
+                html.removeAttribute('data-theme');
+                btn.classList.remove('fa-sun');
+                btn.classList.add('fa-moon');
+                localStorage.setItem('theme', 'light');
+            } else {
+                html.setAttribute('data-theme', 'dark');
+                btn.classList.remove('fa-moon');
+                btn.classList.add('fa-sun');
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        function loadTheme() {
+            const saved = localStorage.getItem('theme');
+            if (saved === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                document.querySelector('.theme-toggle i').classList.remove('fa-moon');
+                document.querySelector('.theme-toggle i').classList.add('fa-sun');
+            }
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        function initParticles() {
+            const canvas = document.getElementById('particles');
+            const ctx = canvas.getContext('2d');
+            
+            function resize() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+            resize();
+            
+            let resizeTimeout;
+            window.addEventListener('resize', () => {
+                clearTimeout(resizeTimeout);
+                resizeTimeout = setTimeout(resize, 200);
+            });
+            
+            const isMobile = window.matchMedia('(pointer: coarse)').matches;
+            const particleCount = isMobile ? 20 : 40;
+            const particles = [];
+            
+            class Particle {
+                constructor() {
+                    this.reset();
+                }
+                
+                reset() {
+                    this.x = Math.random() * canvas.width;
+                    this.y = Math.random() * canvas.height;
+                    this.size = Math.random() * 3 + 1;
+                    this.speedX = (Math.random() - 0.5) * 0.4;
+                    this.speedY = (Math.random() - 0.5) * 0.4;
+                    this.life = 1;
+                }
+                
+                update() {
+                    this.x += this.speedX;
+                    this.y += this.speedY;
+                    this.life -= 0.003;
+                    
+                    if (this.life <= 0 || this.x < 0 || this.x > canvas.width || 
+                        this.y < 0 || this.y > canvas.height) {
+                        this.reset();
+                    }
+                }
+                
+                draw() {
+                    ctx.fillStyle = `rgba(30, 64, 175, ${this.life * 0.4})`;
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+            
+            for (let i = 0; i < particleCount; i++) {
+                particles.push(new Particle());
+            }
+            
+            let frameCount = 0;
+            let isVisible = true;
+            
+            document.addEventListener('visibilitychange', () => {
+                isVisible = !document.hidden;
+            });
+            
+            function animate() {
+                if (!isVisible) {
+                    requestAnimationFrame(animate);
+                    return;
+                }
+                
+                frameCount++;
+                if (isMobile && frameCount % 2 !== 0) {
+                    requestAnimationFrame(animate);
+                    return;
+                }
+                
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach(p => {
+                    p.update();
+                    p.draw();
+                });
+                requestAnimationFrame(animate);
+            }
+            animate();
+        }
+
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('data:text/javascript,' + encodeURIComponent(`
+                self.addEventListener('install', e => e.waitUntil(self.skipWaiting()));
+                self.addEventListener('activate', e => e.waitUntil(self.clients.claim()));
+                self.addEventListener('fetch', e => e.respondWith(fetch(e.request).catch(() => new Response('Offline'))));
+            `)).catch(() => {});
+        }
+    </script>
+</body>
+</html>
