@@ -1675,14 +1675,11 @@
   <div class="app-container app-hidden" id="main-app">
     <div class="quick-actions">
       <div class="quick-actions-row">
-        <a href="https://docs.google.com/forms/d/e/1FAIpQLSfTlKETbJrl-1QrQJ8t5K3KwRCauww0nB5WoAnGufDrKEJh9w/viewform?fbzx=-4465076848793838806" target="_blank" class="btn-form inspection">
-          <i class="fas fa-clipboard-check"></i> Relatório
-        </a>
-        <a href="https://docs.google.com/forms/d/e/1FAIpQLSevB7n06TFzNj4DPij5Py4APsEX5qW-uYYTQsH9Y4PgIlhTdw/viewform?pli=1" target="_blank" class="btn-form">
-          <i class="fas fa-exclamation-circle"></i> Ocorrências
+        <a href="https://www.appsheet.com/start/03a47b01-a165-4709-9460-eea705765f9b?newUser=true&onboarding=true#appName=CENTRALIZADORDEINSPE%C3%87%C3%95ES-275417331-26-01-09&group=%5B%5D&page=card&sort=%5B%5D&table=Menu&view=Home" target="_blank" class="btn-form inspection">
+          <i class="fas fa-clipboard-check"></i> Relatório Diário
         </a>
         <button class="btn-report" id="btn-month-report">
-          <i class="fas fa-chart-bar"></i> Relatório do Mês
+          <i class="fas fa-chart-bar"></i> Relatório Mensal
         </button>
       </div>
     </div>
@@ -2095,15 +2092,20 @@
         return dateString === getTodayString();
       }
 
-      // NOVA FUNÇÃO: Verificar se é fim de semana
       function isWeekend(dateString) {
+        const [year, month, day] = dateString.split('-');
+        const checkDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+        const dayOfWeek = checkDate.getDay();
+        return dayOfWeek === 0 || dayOfWeek === 6;
+      }
+
+      function dateExistsInData(dateString) {
                 const [year, month, day] = dateString.split('-');
         const checkDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
         const dayOfWeek = checkDate.getDay();
-        return dayOfWeek === 0 || dayOfWeek === 6; // 0 = Domingo, 6 = Sábado
+        return dayOfWeek === 0 || dayOfWeek === 6;
       }
 
-      // NOVA FUNÇÃO: Verificar se data existe nos dados
       function dateExistsInData(dateString) {
         const [year, month, day] = dateString.split('-');
         const monthKey = `${year}-${month}`;
@@ -2476,7 +2478,6 @@
         generateMonthsGrid();
       };
 
-      // FUNÇÃO ATUALIZADA: Verificar estado do editor com validações de fim de semana
       function checkEditorState() {
         const selectedDate = editDateInput.value;
         
@@ -2490,7 +2491,6 @@
           return;
         }
 
-        // Verificar se é fim de semana primeiro
         if (isWeekend(selectedDate)) {
           fieldShift1.style.display = 'none';
           fieldShift2.style.display = 'none';
@@ -2529,7 +2529,6 @@
         }
       }
 
-      // FUNÇÃO ATUALIZADA: Event listener para mudança de data com verificação de existência
       editDateInput.addEventListener('change', () => {
         const selectedDate = editDateInput.value;
         
@@ -2538,23 +2537,19 @@
           return;
         }
 
-        // Se for fim de semana, mostrar mensagem e parar
         if (isWeekend(selectedDate)) {
           checkEditorState();
           return;
         }
 
-        // Se for hoje, mostrar mensagem informativa
         if (isToday(selectedDate)) {
           checkEditorState();
           return;
         }
 
-        // Verificar se a data já existe nos dados
         const exists = dateExistsInData(selectedDate);
         
         if (exists) {
-          // Se existir, exigir senha antes de permitir edição
           dayToEdit = { date: formatDateToBR(selectedDate) };
           passwordSubtitle.textContent = 'Digite a senha para editar este dia já preenchido';
           passwordInput.value = '';
@@ -2562,14 +2557,12 @@
           passwordModal.classList.add('show');
           setTimeout(() => passwordInput.focus(), 100);
           
-          // Limpar campos até senha ser confirmada
           editShift1.value = '';
           editShift2.value = '';
           fieldShift1.style.display = 'none';
           fieldShift2.style.display = 'none';
           btnSaveDay.style.display = 'none';
         } else {
-          // Se não existir, permitir preenchimento direto
           const [year, month, day] = selectedDate.split('-');
           const monthKey = `${year}-${month}`;
           const dateStr = formatDateToBR(selectedDate);
@@ -2656,11 +2649,9 @@
               dayToDelete = null;
             }
           } else if (dayToEdit) {
-            // Verificar se veio do campo de data (edição de dia não preenchido)
             const dateParts = dayToEdit.date.split('/');
             const dateISO = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`;
             
-            // Se estiver editando via input de data, preencher o formulário
             if (editDateInput.value === dateISO) {
               const [year, month] = dateISO.split('-');
               const monthKey = `${year}-${month}`;
@@ -2684,7 +2675,6 @@
                 dayEditor.style.borderColor = '';
               }, 1000);
             } else {
-              // Edição via tabela
               const dateParts = dayToEdit.date.split('/');
               const dateISO = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`;
               editDateInput.value = dateISO;
@@ -2722,7 +2712,6 @@
         passwordModal.classList.remove('show');
         dayToDelete = null;
         dayToEdit = null;
-        // Limpar seleção de data se cancelou
         if (editDateInput.value && dateExistsInData(editDateInput.value)) {
           editDateInput.value = getTodayString();
           checkEditorState();
@@ -2785,7 +2774,6 @@
           return;
         }
 
-        // Verificar se é fim de semana
         if (isWeekend(dateInput)) {
           showToast('error', 'Não é permitido adicionar registros em finais de semana!');
           return;
