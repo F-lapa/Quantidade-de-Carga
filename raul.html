@@ -40,6 +40,7 @@
             background: var(--bg);
             color: var(--text);
             min-height: 100vh;
+            min-height: 100dvh;
             display: flex;
             justify-content: center;
             align-items: flex-start;
@@ -162,65 +163,6 @@
             background: rgba(255,255,255,0.05);
         }
 
-        .date-input-wrapper {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: var(--space-sm);
-            margin-bottom: var(--space-sm);
-            flex-wrap: wrap;
-        }
-
-        .date-display {
-            flex: 1;
-            min-width: 200px;
-            padding: clamp(10px, 3vw, 14px) clamp(12px, 3vw, 16px);
-            background: var(--card-bg);
-            border: 2px solid rgba(0,0,0,0.1);
-            border-radius: 12px;
-            font-size: clamp(0.9rem, 3.5vw, 1.1rem);
-            color: var(--text);
-            text-align: center;
-            font-weight: 600;
-            min-height: 44px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        [data-theme="dark"] .date-display {
-            border-color: rgba(255,255,255,0.1);
-        }
-
-        .nav-arrows {
-            display: flex;
-            gap: var(--space-xs);
-        }
-
-        .arrow-btn {
-            width: clamp(40px, 10vw, 48px);
-            height: clamp(40px, 10vw, 48px);
-            border: none;
-            border-radius: 50%;
-            background: var(--primary);
-            color: white;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: clamp(0.9rem, 3vw, 1.1rem);
-            min-width: 44px;
-            min-height: 44px;
-            touch-action: manipulation;
-        }
-
-        .arrow-btn:hover, .arrow-btn:active {
-            background: #1e3a8a;
-            transform: scale(1.15);
-            box-shadow: 0 4px 12px rgba(30, 64, 175, 0.3);
-        }
-
         .calendar-toggle {
             background: none;
             border: 2px dashed var(--accent);
@@ -232,7 +174,7 @@
             font-weight: 600;
             transition: all 0.3s ease;
             width: 100%;
-            margin-top: var(--space-xs);
+            margin-bottom: var(--space-sm);
             min-height: 44px;
             touch-action: manipulation;
         }
@@ -254,7 +196,6 @@
             font-weight: 600;
             transition: all 0.3s ease;
             width: 100%;
-            margin-top: var(--space-sm);
             min-height: 44px;
             touch-action: manipulation;
             display: flex;
@@ -290,6 +231,30 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: var(--space-sm);
+        }
+
+        .arrow-btn {
+            width: clamp(40px, 10vw, 48px);
+            height: clamp(40px, 10vw, 48px);
+            border: none;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: clamp(0.9rem, 3vw, 1.1rem);
+            min-width: 44px;
+            min-height: 44px;
+            touch-action: manipulation;
+        }
+
+        .arrow-btn:hover, .arrow-btn:active {
+            background: #1e3a8a;
+            transform: scale(1.15);
+            box-shadow: 0 4px 12px rgba(30, 64, 175, 0.3);
         }
 
         .calendar-grid {
@@ -1113,7 +1078,6 @@
         </div>
 
         <div class="date-section">
-
             <button class="calendar-toggle" onclick="toggleCalendar()">
                 <i class="fas fa-calendar-alt"></i> 
                 <span id="calendarBtnText">Ver Calendário Mensal</span>
@@ -1272,9 +1236,9 @@
             { mes: 12, dia: 25, nome: "Natal" }
         ];
 
-        // Datas de referência da escala (formato: Ano, Mês, Dia)
-        // referenceDate: 14/03/2025 é um dia de posto normal (G3, G4, etc)
-        const REFERENCE_DATE = { ano: 2025, mes: 3, dia: 14 };
+        // DATAS DE REFERÊNCIA CORRETAS (do código antigo)
+        const referenceDate = new Date("2025-03-14");
+        const tomorrowDate = new Date("2025-05-17");
         
         let currentDate = new Date();
         let calendarDate = new Date();
@@ -1283,58 +1247,6 @@
         let currentFilter = 'all';
         let isModalOpen = false;
         let isFeriadosModalOpen = false;
-
-        // ========== FUNÇÕES UTILITÁRIAS DE DATA ==========
-        
-        function criarData(ano, mes, dia) {
-            return new Date(ano, mes - 1, dia, 12, 0, 0, 0);
-        }
-        
-        function normalizarData(data) {
-            const d = new Date(data);
-            d.setHours(0, 0, 0, 0);
-            return d;
-        }
-        
-        function mesmoDia(d1, d2) {
-            return d1.getFullYear() === d2.getFullYear() &&
-                   d1.getMonth() === d2.getMonth() &&
-                   d1.getDate() === d2.getDate();
-        }
-        
-        function formatarData(data) {
-            return data.toLocaleDateString('pt-BR', { 
-                weekday: 'long', 
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric' 
-            });
-        }
-
-        // ========== LÓGICA DA ESCALA DE TRABALHO ==========
-        
-        function calcularPostoNaData(data) {
-            const refDate = criarData(REFERENCE_DATE.ano, REFERENCE_DATE.mes, REFERENCE_DATE.dia);
-            const targetDate = new Date(data);
-            targetDate.setHours(12, 0, 0, 0);
-            
-            const diffTime = targetDate - refDate;
-            const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
-            
-            let posto, isLatam;
-            
-            if (diffDays % 2 === 0) {
-                const ciclos = Math.floor(diffDays / 2);
-                const postoIndex = ((ciclos % 7) + 7) % 7;
-                posto = postos[postoIndex];
-                isLatam = false;
-            } else {
-                posto = "LATAM CARGO";
-                isLatam = true;
-            }
-            
-            return { posto, isLatam };
-        }
 
         // ========== INICIALIZAÇÃO ==========
         
@@ -1353,8 +1265,6 @@
             
             // Keyboard navigation
             document.addEventListener('keydown', (e) => {
-                if (e.key === 'ArrowLeft' && !isModalOpen && !isFeriadosModalOpen) changeDate(-1);
-                if (e.key === 'ArrowRight' && !isModalOpen && !isFeriadosModalOpen) changeDate(1);
                 if (e.key === 'Escape' && isModalOpen) closeModal();
                 if (e.key === 'Escape' && isFeriadosModalOpen) closeFeriadosModal();
             });
@@ -1369,18 +1279,23 @@
             }, { passive: false });
         });
 
-        function updateDateDisplay() {
-            const display = document.getElementById('dateDisplay');
-            if (display) {
-                display.textContent = currentDate.toLocaleDateString('pt-BR');
-            }
-        }
-
         function calculatePosto(date) {
-            const resultado = calcularPostoNaData(date);
-            currentPosto = resultado.posto;
-            updateDateDisplay();
-            displayResult(date, resultado.posto, resultado.isLatam);
+            const dayDifferenceFromRef = Math.floor((date - referenceDate) / (1000 * 60 * 60 * 24));
+            const dayDifferenceFromTomorrow = Math.floor((date - tomorrowDate) / (1000 * 60 * 60 * 24));
+            
+            let posto, isLatam;
+            
+            if (dayDifferenceFromRef % 2 === 0) {
+                const postoIndex = ((Math.floor(dayDifferenceFromTomorrow / 2)) % postos.length + postos.length) % postos.length;
+                posto = postos[postoIndex];
+                isLatam = false;
+            } else {
+                posto = "LATAM CARGO";
+                isLatam = true;
+            }
+
+            currentPosto = posto;
+            displayResult(date, posto, isLatam);
             
             if (document.getElementById('calendarView').classList.contains('active')) {
                 renderCalendar();
@@ -1393,20 +1308,26 @@
             
             card.classList.remove('show');
             
-            setTimeout(() => {
-                document.getElementById('postoIcon').textContent = info.icon;
-                document.getElementById('postoName').textContent = posto;
-                document.getElementById('postoName').style.color = info.color;
-                document.getElementById('postoDate').textContent = formatarData(date);
-                document.getElementById('postoBadge').textContent = isLatam ? 'LATAM' : 'POSTO';
-                document.getElementById('postoBadge').style.background = isLatam ? 'rgba(239, 68, 68, 0.3)' : 'rgba(255,255,255,0.2)';
-                
-                card.style.background = isLatam 
-                    ? 'linear-gradient(135deg, #dc2626, #991b1b)' 
-                    : `linear-gradient(135deg, ${info.color}, ${adjustColor(info.color, -40)})`;
-                
-                card.classList.add('show');
-            }, 50);
+            requestAnimationFrame(() => {
+                setTimeout(() => {
+                    document.getElementById('postoIcon').textContent = info.icon;
+                    document.getElementById('postoName').textContent = posto;
+                    document.getElementById('postoName').style.color = info.color;
+                    document.getElementById('postoDate').textContent = date.toLocaleDateString('pt-BR', { 
+                        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
+                    });
+                    document.getElementById('postoBadge').textContent = isLatam ? 'LATAM' : 'POSTO';
+                    document.getElementById('postoBadge').style.background = isLatam ? 'rgba(239, 68, 68, 0.3)' : 'rgba(255,255,255,0.2)';
+                    
+                    card.style.background = isLatam 
+                        ? 'linear-gradient(135deg, #dc2626, #991b1b)' 
+                        : `linear-gradient(135deg, ${info.color}, ${adjustColor(info.color, -40)})`;
+                    
+                    requestAnimationFrame(() => {
+                        card.classList.add('show');
+                    });
+                }, 50);
+            });
         }
 
         function adjustColor(color, amount) {
@@ -1441,15 +1362,6 @@
             
             currentDate = date;
             calculatePosto(date);
-        }
-
-        function changeDate(days) {
-            const newDate = new Date(currentDate);
-            newDate.setDate(newDate.getDate() + days);
-            newDate.setHours(12, 0, 0, 0);
-            
-            currentDate = newDate;
-            calculatePosto(newDate);
         }
 
         function toggleCalendar() {
@@ -1498,10 +1410,11 @@
             }
             
             for (let day = 1; day <= daysInMonth; day++) {
-                const date = criarData(year, month + 1, day);
+                const date = new Date(year, month, day);
+                date.setHours(12, 0, 0, 0);
                 const div = createCalendarDay(day, false, date);
                 
-                if (mesmoDia(date, currentDate)) {
+                if (date.toDateString() === currentDate.toDateString()) {
                     div.classList.add('selected');
                 }
                 
@@ -1511,10 +1424,10 @@
                     div.title = feriado.nome;
                 }
                 
-                const resultado = calcularPostoNaData(date);
+                const posto = getPostoForDate(date);
                 const dot = document.createElement('div');
                 dot.className = 'posto-dot';
-                dot.style.background = postosInfo[resultado.posto]?.color || '#666';
+                dot.style.background = postosInfo[posto]?.color || '#666';
                 div.appendChild(dot);
                 
                 div.onclick = () => {
@@ -1541,9 +1454,20 @@
             div.setAttribute('role', 'button');
             div.setAttribute('tabindex', '0');
             if (date) {
-                div.setAttribute('aria-label', formatarData(date));
+                div.setAttribute('aria-label', date.toLocaleDateString('pt-BR'));
             }
             return div;
+        }
+
+        function getPostoForDate(date) {
+            const dayDiffRef = Math.floor((date - referenceDate) / (1000 * 60 * 60 * 24));
+            const dayDiffTom = Math.floor((date - tomorrowDate) / (1000 * 60 * 60 * 24));
+            
+            if (dayDiffRef % 2 === 0) {
+                const idx = ((Math.floor(dayDiffTom / 2)) % postos.length + postos.length) % postos.length;
+                return postos[idx];
+            }
+            return "LATAM CARGO";
         }
 
         // ========== MODAL FERIADOS LATAM ==========
@@ -1575,10 +1499,11 @@
             const anoAtual = new Date().getFullYear();
             
             feriadosFixos.forEach(feriado => {
-                const dataFeriado = criarData(anoAtual, feriado.mes, feriado.dia);
-                const resultado = calcularPostoNaData(dataFeriado);
+                const dataFeriado = new Date(anoAtual, feriado.mes - 1, feriado.dia);
+                dataFeriado.setHours(12, 0, 0, 0);
+                const resultado = getPostoForDate(dataFeriado);
                 
-                if (resultado.isLatam) {
+                if (resultado === "LATAM CARGO") {
                     feriadosLatam.push({
                         nome: feriado.nome,
                         data: dataFeriado,
@@ -1638,10 +1563,11 @@
             const anoAtual = new Date().getFullYear();
             
             feriadosFixos.forEach(feriado => {
-                const dataFeriado = criarData(anoAtual, feriado.mes, feriado.dia);
-                const resultado = calcularPostoNaData(dataFeriado);
+                const dataFeriado = new Date(anoAtual, feriado.mes - 1, feriado.dia);
+                dataFeriado.setHours(12, 0, 0, 0);
+                const resultado = getPostoForDate(dataFeriado);
                 
-                if (resultado.isLatam) {
+                if (resultado === "LATAM CARGO") {
                     feriadosLatam.push({
                         nome: feriado.nome,
                         data: dataFeriado
@@ -1792,8 +1718,7 @@
             list.innerHTML = '';
             filtered.forEach((ocorrencia, index) => {
                 const info = postosInfo[ocorrencia.posto];
-                const [ano, mes, dia] = ocorrencia.date.split('-').map(Number);
-                const date = criarData(ano, mes, dia);
+                const date = new Date(ocorrencia.date);
                 
                 const div = document.createElement('div');
                 div.className = 'ocorrencia-item';
@@ -1837,7 +1762,7 @@
                 return;
             }
             
-            let mensagem = `*Relatório de Ocorrências - Postos de Trabalho*\n\n`;
+                       let mensagem = `*Relatório de Ocorrências - Postos de Trabalho*\n\n`;
             mensagem += `📅 Gerado em: ${new Date().toLocaleDateString('pt-BR')}\n\n`;
             
             const porPosto = {};
@@ -1851,8 +1776,7 @@
                 mensagem += `\n${info.icon} *${posto}* (${lista.length} ocorrência${lista.length > 1 ? 's' : ''})\n`;
                 mensagem += `━━━━━━━━━━━━━━━━\n`;
                 lista.forEach(o => {
-                    const [ano, mes, dia] = o.date.split('-').map(Number);
-                    const date = criarData(ano, mes, dia);
+                    const date = new Date(o.date);
                     mensagem += `📆 ${date.toLocaleDateString('pt-BR')}\n`;
                     mensagem += `📝 ${o.descricao}\n\n`;
                 });
@@ -1866,8 +1790,7 @@
             if (!ocorrencia) return;
             
             const info = postosInfo[ocorrencia.posto];
-            const [ano, mes, dia] = ocorrencia.date.split('-').map(Number);
-            const date = criarData(ano, mes, dia);
+            const date = new Date(ocorrencia.date);
             
             const mensagem = `*Ocorrência - ${ocorrencia.posto}*\n\n` +
                            `📅 Data: ${date.toLocaleDateString('pt-BR')}\n` +
