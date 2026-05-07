@@ -667,25 +667,24 @@
       opacity: 0.6;
     }
 
-.modal-overlay {
-       position: fixed;
-       inset: 0;
-       background: rgba(5, 10, 20, 0.95);
-       backdrop-filter: blur(10px);
-       display: flex; /* Sempre visível, mas controlado por visibilidade e opacidade */
-       align-items: center;
-       justify-content: center;
-       z-index: 1000;
-       opacity: 0;
-       visibility: hidden; /* Escondido por padrão */
-       transition: opacity 0.3s ease, visibility 0.3s ease;
-       padding: 1rem;
-     }
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(5, 10, 20, 0.95);
+      backdrop-filter: blur(10px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      padding: 1rem;
+    }
 
-.modal-overlay.show {
-       visibility: visible;
-       opacity: 1;
-     }
+    .modal-overlay.show {
+      display: flex;
+      opacity: 1;
+    }
 
     #report-modal-overlay {
       z-index: 1000;
@@ -1308,17 +1307,15 @@
       color: var(--dark-bg);
     }
 
-.modal {
-       background: var(--glass-bg);
-       border: 1px solid var(--glass-border);
-       border-radius: 16px;
-       padding: 1.5rem;
-       max-width: 350px;
-       width: 90%;
-       text-align: center;
-       transform: scale(0.9) translateY(20px); /* Estado inicial para animação */
-       transition: all 0.3s ease;
-     }
+    .modal {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      padding: 1.5rem;
+      max-width: 350px;
+      width: 90%;
+      text-align: center;
+    }
 
     .modal-icon {
       width: 50px;
@@ -1402,13 +1399,9 @@
       transition: all 0.3s ease;
     }
 
-.modal-overlay.show .login-modal {
-       transform: scale(1) translateY(0);
-     }
-
-     .modal-overlay.show .modal {
-       transform: scale(1) translateY(0);
-     }
+    .modal-overlay.show .login-modal {
+      transform: scale(1) translateY(0);
+    }
 
     .login-icon {
       width: 80px;
@@ -1990,12 +1983,6 @@
     }
 
     function login(username, password, remember) {
-            console.log("--- Login Debug ---");
-      console.log("Input Username (trimmed, lowercased):", username);
-      console.log("Input Password (trimmed):", password);
-      console.log("Stored Username:", CREDENTIALS.username);
-      console.log("Stored Password:", CREDENTIALS.password);
-      console.log("Comparison result:", username === CREDENTIALS.username && password === CREDENTIALS.password);
       if (username === CREDENTIALS.username && password === CREDENTIALS.password) {
         if (remember) {
           localStorage.setItem(REMEMBER_KEY, 'true');
@@ -2016,8 +2003,8 @@
 
     document.getElementById('login-form').addEventListener('submit', (e) => {
       e.preventDefault();
-      const username = document.getElementById("login-username").value.trim().toLowerCase();
-      const password = document.getElementById("login-password").value.trim();
+      const username = document.getElementById('login-username').value.trim().toLowerCase();
+      const password = document.getElementById('login-password').value;
       const remember = document.getElementById('remember-device').checked;
       
       login(username, password, remember);
@@ -2356,7 +2343,7 @@
       const showToast = (type, title, msg = '') => {
         const toast = document.getElementById('toast');
         document.getElementById('toast-icon').className = 'toast-icon ' + type;
-         document.getElementById('toast-icon').innerHTML = type === 'success' ? '<i class="fas fa-check"></i>' : (type === 'info' ? '<i class="fas fa-info-circle"></i>' : '<i class="fas fa-exclamation-circle"></i>');
+        document.getElementById('toast-icon').innerHTML = type === 'success' ? '<i class="fas fa-check"></i>' : '<i class="fas fa-info-circle"></i>';
         document.getElementById('toast-title').textContent = title;
         document.getElementById('toast-message').textContent = msg;
         toast.classList.add('show');
@@ -3005,75 +2992,8 @@
         doc.setFontSize(8);
         doc.text(`Relatório gerado em ${dateStr} às ${timeStr}`, 105, pageHeight - 6, { align: 'center' });
         
-        const pdfFileName = `Relatorio_LATAM_Cargo_${monthName}_${year}.pdf`        const pdfBlob = doc.output('blob');
-        const pdfFile = new File([pdfBlob], pdfFileName, { type: 'application/pdf' });
-
-        if (navigator.share && navigator.canShare({ files: [pdfFile] })) {
-          try {
-            await navigator.share({
-              files: [pdfFile],
-              title: 'Relatório de Contagem de Cargas',
-              text: `*Relatório de Contagem de Cargas*
-
-Prezado(a),
-
-Segue em anexo o relatório de contagem de cargas referente ao período.
-
-*Nome do Arquivo:* ${pdfFileName}
-
-Qualquer dúvida, estou à disposição.
-
-Atenciosamente,
-SISTEMAS DE CONTAGEM DE CARGAS`
-            });
-            showToast('success', 'PDF compartilhado com sucesso!');
-          } catch (error) {
-            console.error('Erro ao compartilhar PDF:', error);
-            showToast('error', 'Falha ao compartilhar PDF', 'Tente o compartilhamento manual.');
-            // Fallback para WhatsApp se o compartilhamento falhar
-            const whatsappMessage = encodeURIComponent(
-              `*Relatório de Contagem de Cargas*
-
-Prezado(a),
-
-Segue em anexo o relatório de contagem de cargas referente ao período.
-
-*Nome do Arquivo:* ${pdfFileName}
-
-Por favor, anexe o arquivo PDF que foi baixado automaticamente para esta conversa.
-
-Qualquer dúvida, estou à disposição.
-
-Atenciosamente,
-SISTEMAS DE CONTAGEM DE CARGAS`
-            );
-            window.open(`https://wa.me/?text=${whatsappMessage}`, '_blank');
-          }
-        } else {
-          // Fallback para download e WhatsApp Web/App com instruções
-          doc.save(pdfFileName);
-          showToast('info', 'PDF gerado e baixado!', 'Anexe o arquivo baixado no WhatsApp.');
-
-          setTimeout(() => {
-            const whatsappMessage = encodeURIComponent(
-              `*Relatório de Contagem de Cargas*
-
-Prezado(a),
-
-Segue em anexo o relatório de contagem de cargas referente ao período.
-
-*Nome do Arquivo:* ${pdfFileName}
-
-Por favor, anexe o arquivo PDF que foi baixado automaticamente para esta conversa.
-
-Qualquer dúvida, estou à disposição.
-
-Atenciosamente,
-SISTEMAS DE CONTAGEM DE CARGAS`
-            );
-            window.open(`https://wa.me/?text=${whatsappMessage}`, '_blank');
-          }, 1000);
-        }
+        doc.save(`Relatorio_LATAM_Cargo_${monthName}_${year}.pdf`);
+        showToast('success', 'PDF gerado com sucesso!');
       };
 
       window.addEventListener('online', () => {
