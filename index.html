@@ -1990,7 +1990,13 @@
     }
 
     function login(username, password, remember) {
-      if (username.trim() === CREDENTIALS.username && password.trim() === CREDENTIALS.password) {
+            console.log("--- Login Debug ---");
+      console.log("Input Username (trimmed, lowercased):", username);
+      console.log("Input Password (trimmed):", password);
+      console.log("Stored Username:", CREDENTIALS.username);
+      console.log("Stored Password:", CREDENTIALS.password);
+      console.log("Comparison result:", username === CREDENTIALS.username && password === CREDENTIALS.password);
+      if (username === CREDENTIALS.username && password === CREDENTIALS.password) {
         if (remember) {
           localStorage.setItem(REMEMBER_KEY, 'true');
         } else {
@@ -2010,8 +2016,8 @@
 
     document.getElementById('login-form').addEventListener('submit', (e) => {
       e.preventDefault();
-      const username = document.getElementById('login-username').value.trim().toLowerCase();
-      const password = document.getElementById('login-password').value;
+      const username = document.getElementById("login-username").value.trim().toLowerCase();
+      const password = document.getElementById("login-password").value.trim();
       const remember = document.getElementById('remember-device').checked;
       
       login(username, password, remember);
