@@ -1,10 +1,10 @@
 {
-  "name": "Gerador de Ocorrências APAC",
-  "short_name": "APAC Gerador",
+  "name": "SISTEMAS DE CONTAGEM DE CARGAS",
+  "short_name": "Contagem Cargas",
   "start_url": ".",
   "display": "standalone",
-  "background_color": "#0f172a",
-  "theme_color": "#f59e0b",
+  "background_color": "#050a14",
+  "theme_color": "#00f0ff",
   "icons": [
     {
       "src": "icone.png",
