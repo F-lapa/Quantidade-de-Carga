@@ -1990,7 +1990,7 @@
     }
 
     function login(username, password, remember) {
-      if (username === CREDENTIALS.username && password === CREDENTIALS.password) {
+      if (username.trim() === CREDENTIALS.username && password.trim() === CREDENTIALS.password) {
         if (remember) {
           localStorage.setItem(REMEMBER_KEY, 'true');
         } else {
