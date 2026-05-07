@@ -3005,7 +3005,22 @@
 
         // Abrir WhatsApp para envio do PDF
         setTimeout(() => {
-          const whatsappMessage = encodeURIComponent(`Olá! Segue o relatório de contagem de cargas: ${pdfFileName}. Por favor, anexe o arquivo que acabou de ser baixado.`);
+          const whatsappMessage = encodeURIComponent(
+            `*Relatório de Contagem de Cargas*
+
+Prezado(a),
+
+Segue em anexo o relatório de contagem de cargas referente ao período.
+
+*Nome do Arquivo:* ${pdfFileName}
+
+Por favor, anexe o arquivo PDF que foi baixado automaticamente para esta conversa.
+
+Qualquer dúvida, estou à disposição.
+
+Atenciosamente,
+SISTEMAS DE CONTAGEM DE CARGAS`
+          );
           window.open(`https://wa.me/?text=${whatsappMessage}`, '_blank');
         }, 1000); // Pequeno atraso para garantir que o download comece
       };
