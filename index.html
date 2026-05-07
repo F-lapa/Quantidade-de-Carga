@@ -2350,7 +2350,7 @@
       const showToast = (type, title, msg = '') => {
         const toast = document.getElementById('toast');
         document.getElementById('toast-icon').className = 'toast-icon ' + type;
-        document.getElementById('toast-icon').innerHTML = type === 'success' ? '<i class="fas fa-check"></i>' : '<i class="fas fa-info-circle"></i>';
+         document.getElementById('toast-icon').innerHTML = type === 'success' ? '<i class="fas fa-check"></i>' : (type === 'info' ? '<i class="fas fa-info-circle"></i>' : '<i class="fas fa-exclamation-circle"></i>');
         document.getElementById('toast-title').textContent = title;
         document.getElementById('toast-message').textContent = msg;
         toast.classList.add('show');
@@ -2999,14 +2999,34 @@
         doc.setFontSize(8);
         doc.text(`Relatório gerado em ${dateStr} às ${timeStr}`, 105, pageHeight - 6, { align: 'center' });
         
-        const pdfFileName = `Relatorio_LATAM_Cargo_${monthName}_${year}.pdf`;
-        doc.save(pdfFileName);
-        showToast("success", "PDF gerado com sucesso!");
+        const pdfFileName = `Relatorio_LATAM_Cargo_${monthName}_${year}.pdf`        const pdfBlob = doc.output('blob');
+        const pdfFile = new File([pdfBlob], pdfFileName, { type: 'application/pdf' });
 
-        // Abrir WhatsApp para envio do PDF
-        setTimeout(() => {
-          const whatsappMessage = encodeURIComponent(
-            `*Relatório de Contagem de Cargas*
+        if (navigator.share && navigator.canShare({ files: [pdfFile] })) {
+          try {
+            await navigator.share({
+              files: [pdfFile],
+              title: 'Relatório de Contagem de Cargas',
+              text: `*Relatório de Contagem de Cargas*
+
+Prezado(a),
+
+Segue em anexo o relatório de contagem de cargas referente ao período.
+
+*Nome do Arquivo:* ${pdfFileName}
+
+Qualquer dúvida, estou à disposição.
+
+Atenciosamente,
+SISTEMAS DE CONTAGEM DE CARGAS`
+            });
+            showToast('success', 'PDF compartilhado com sucesso!');
+          } catch (error) {
+            console.error('Erro ao compartilhar PDF:', error);
+            showToast('error', 'Falha ao compartilhar PDF', 'Tente o compartilhamento manual.');
+            // Fallback para WhatsApp se o compartilhamento falhar
+            const whatsappMessage = encodeURIComponent(
+              `*Relatório de Contagem de Cargas*
 
 Prezado(a),
 
@@ -3020,9 +3040,34 @@ Qualquer dúvida, estou à disposição.
 
 Atenciosamente,
 SISTEMAS DE CONTAGEM DE CARGAS`
-          );
-          window.open(`https://wa.me/?text=${whatsappMessage}`, '_blank');
-        }, 1000); // Pequeno atraso para garantir que o download comece
+            );
+            window.open(`https://wa.me/?text=${whatsappMessage}`, '_blank');
+          }
+        } else {
+          // Fallback para download e WhatsApp Web/App com instruções
+          doc.save(pdfFileName);
+          showToast('info', 'PDF gerado e baixado!', 'Anexe o arquivo baixado no WhatsApp.');
+
+          setTimeout(() => {
+            const whatsappMessage = encodeURIComponent(
+              `*Relatório de Contagem de Cargas*
+
+Prezado(a),
+
+Segue em anexo o relatório de contagem de cargas referente ao período.
+
+*Nome do Arquivo:* ${pdfFileName}
+
+Por favor, anexe o arquivo PDF que foi baixado automaticamente para esta conversa.
+
+Qualquer dúvida, estou à disposição.
+
+Atenciosamente,
+SISTEMAS DE CONTAGEM DE CARGAS`
+            );
+            window.open(`https://wa.me/?text=${whatsappMessage}`, '_blank');
+          }, 1000);
+        }
       };
 
       window.addEventListener('online', () => {
