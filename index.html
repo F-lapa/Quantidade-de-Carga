@@ -667,24 +667,25 @@
       opacity: 0.6;
     }
 
-    .modal-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(5, 10, 20, 0.95);
-      backdrop-filter: blur(10px);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 1000;
-      opacity: 0;
-      transition: opacity 0.3s ease;
-      padding: 1rem;
-    }
+.modal-overlay {
+       position: fixed;
+       inset: 0;
+       background: rgba(5, 10, 20, 0.95);
+       backdrop-filter: blur(10px);
+       display: flex; /* Sempre visível, mas controlado por visibilidade e opacidade */
+       align-items: center;
+       justify-content: center;
+       z-index: 1000;
+       opacity: 0;
+       visibility: hidden; /* Escondido por padrão */
+       transition: opacity 0.3s ease, visibility 0.3s ease;
+       padding: 1rem;
+     }
 
-    .modal-overlay.show {
-      display: flex;
-      opacity: 1;
-    }
+.modal-overlay.show {
+       visibility: visible;
+       opacity: 1;
+     }
 
     #report-modal-overlay {
       z-index: 1000;
@@ -1307,15 +1308,17 @@
       color: var(--dark-bg);
     }
 
-    .modal {
-      background: var(--glass-bg);
-      border: 1px solid var(--glass-border);
-      border-radius: 16px;
-      padding: 1.5rem;
-      max-width: 350px;
-      width: 90%;
-      text-align: center;
-    }
+.modal {
+       background: var(--glass-bg);
+       border: 1px solid var(--glass-border);
+       border-radius: 16px;
+       padding: 1.5rem;
+       max-width: 350px;
+       width: 90%;
+       text-align: center;
+       transform: scale(0.9) translateY(20px); /* Estado inicial para animação */
+       transition: all 0.3s ease;
+     }
 
     .modal-icon {
       width: 50px;
@@ -1399,9 +1402,13 @@
       transition: all 0.3s ease;
     }
 
-    .modal-overlay.show .login-modal {
-      transform: scale(1) translateY(0);
-    }
+.modal-overlay.show .login-modal {
+       transform: scale(1) translateY(0);
+     }
+
+     .modal-overlay.show .modal {
+       transform: scale(1) translateY(0);
+     }
 
     .login-icon {
       width: 80px;
@@ -2992,8 +2999,15 @@
         doc.setFontSize(8);
         doc.text(`Relatório gerado em ${dateStr} às ${timeStr}`, 105, pageHeight - 6, { align: 'center' });
         
-        doc.save(`Relatorio_LATAM_Cargo_${monthName}_${year}.pdf`);
-        showToast('success', 'PDF gerado com sucesso!');
+        const pdfFileName = `Relatorio_LATAM_Cargo_${monthName}_${year}.pdf`;
+        doc.save(pdfFileName);
+        showToast("success", "PDF gerado com sucesso!");
+
+        // Abrir WhatsApp para envio do PDF
+        setTimeout(() => {
+          const whatsappMessage = encodeURIComponent(`Olá! Segue o relatório de contagem de cargas: ${pdfFileName}. Por favor, anexe o arquivo que acabou de ser baixado.`);
+          window.open(`https://wa.me/?text=${whatsappMessage}`, '_blank');
+        }, 1000); // Pequeno atraso para garantir que o download comece
       };
 
       window.addEventListener('online', () => {
